@@ -1,1 +1,1 @@
-# threasureHunting
+# Treasure Hunting
