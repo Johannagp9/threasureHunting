@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}
+    Threasure Hunting
+{% endblock %}
+{% block  stylesheet %}
+{% endblock %}
+{% block body %}
+    <div class="contenedor" align="center">
+        <form id="authentication_form" action="{% url 'autenticar' %}"
+              method="post" enctype="multipart/form-data"> {% csrf_token %}
+        <input id="token" type="hidden" name="token">
+            </form>
+        <div class="g-signin2" data-onsuccess="onSignIn" style="padding-top: 30px"></div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {% load static %}
+    {{ block.super }}
+    {% load static %}
+    <script>
+        function onSignIn(googleUser) {
+            document.getElementById("token").value = googleUser.getAuthResponse().id_token;
+            document.getElementById("authentication_form").submit();
+        }
+    </script>
+{% endblock %}
