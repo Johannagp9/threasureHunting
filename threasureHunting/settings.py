@@ -95,8 +95,7 @@ WSGI_APPLICATION = 'threasureHunting.wsgi.application'
 DB_USER = "cloudComputing"
 DB_PASSWORD = "threasureHunting"
 DB_NAME = "treasureHunting"
-DB_HOST = f"mongodb+srv://{DB_USER}:{DB_PASSWORD}@cluster0.agrwi.mongodb.net/{DB_NAME}?retryWrites=true' \
-          '&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE"
+DB_HOST = f"mongodb+srv://{DB_USER}:{DB_PASSWORD}@cluster0.agrwi.mongodb.net/{DB_NAME}?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE"
 
 MONGODB_DATABASES = {
     'default': {
