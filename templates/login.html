@@ -6,7 +6,7 @@
 {% endblock %}
 {% block body %}
     <div class="contenedor" align="center">
-        <form id="authentication_form" action="{% url 'autenticar' %}"
+        <form id="authentication_form"
               method="post" enctype="multipart/form-data"> {% csrf_token %}
         <input id="token" type="hidden" name="token">
             </form>
