@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}
+    Threasure Hunting
+{% endblock %}
+{% block body %}
+    <div class="container">
+        <h3 style="color: white; margin: 50px"><img id="icon" src="https://img.icons8.com/ios-glyphs/30/000000/treasure-map.png" style="margin-bottom: -10px"/>
+            Treasurehunt</h3>
+        <form id="authentication_form" action="{% url 'register' %}"
+              method="post" enctype="multipart/form-data"> {% csrf_token %}
+
+            <div class="container" align="center">
+                <br>
+        <!---MENSAJES-->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}success
+        {% elif  message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}danger{% else %}secondary{% endif %}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    <!---->
+                <div class="container-fluid">
+                <h2 style="color: white;">&nbsp;Fill your Information</h2>
+                <br>
+                    <div class="container" style="background-color: white;">
+                <div class="mb-3"><label style="color: white;" class="form-label">Username</label>
+                    <input class="form-control" type="text" name="name" required>
+                </div>
+                    <div class="mb-3"><label style="color: white;" class="form-label">Date of Birth</label>
+                    <input class="form-control" type="text" name="date" required>
+                </div>
+                        </div>
+                    <button class="btn btn-outline" type="submit" style="margin: 30px">Sign in</button>
+            </div>
+
+            </div>
+
+            </form>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {% load static %}
+    {{ block.super }}
+    {% load static %}
+{% endblock %}

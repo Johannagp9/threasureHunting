@@ -1,3 +1,9 @@
 from django.urls import path
 
-urlpatterns = []
+from client import views
+
+urlpatterns = [
+
+path('auth/', views.auth_user, name='auth'),
+path('register/', views.auth_user, name='register'),
+]
