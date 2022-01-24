@@ -32,9 +32,8 @@ def generate_request(url, token, params):
 
 
 def response_2_dict(response):
-    # No hago get de nada de la response porque lo quiero todo
     json_response = json.dumps(response)
-    result = json.loads(json_response)  # String to list
+    result = json.loads(json_response)  
     return result
 
 
@@ -67,7 +66,6 @@ def generate_put(url, datos, token):
 
 
 def authenticate_user(id_token):
-    # Llamo a la API.
     url = APP_NAME + "/api/auth/"
     params = {'token': id_token}
     header = {'content_type': 'application/x-www-form-urlencoded'}
@@ -91,6 +89,13 @@ def paginate(request, list, num_pages, page_to_get='page'):
 
     return items
 
+def get_normalization(valor):
+    valor = re.sub(
+        r"([^n\u0300-\u036f]|n(?!\u0303(?![\u0300-\u036f])))[\u0300-\u036f]+", r"\1", 
+        normalize( "NFD", valor), 0, re.I
+    )
+
+    return normalize("NFC", valor)
 
 def get_coordinates(location):
     coordinates = cache.get(location)
@@ -103,7 +108,7 @@ def get_coordinates(location):
                 lat = float(result[0]["lat"])
                 long = float(result[0]["lon"])
                 dict = {"long": long, "lat": lat}
-                cache.set(normalizar(location), dict, 3600)
+                cache.set(get_normalization(location), dict, 3600)
                 return dict
         return None
     return {"long": coordinates['long'], "lat": coordinates['lat']}
@@ -111,17 +116,9 @@ def get_coordinates(location):
 def calculate_min_distance(location,graffiti_lat,graffiti_long):
     if location is not None and graffiti_lat is not None and graffiti_long is not None:
         coordinates=get_coordinates(location)
-        print("RAIZ" + str(math.sqrt(pow(graffiti_lat-coordinates['lat'],2)+pow(graffiti_long-coordinates['long'],2))))
-        print("HOLA "+ str(sys.float_info.max))
         return math.sqrt(pow(graffiti_lat-coordinates['lat'],2)+pow(graffiti_long-coordinates['long'],2))
     return sys.float_info.max
 
-def normalizar(valor):
-    valor = re.sub(
-        r"([^n\u0300-\u036f]|n(?!\u0303(?![\u0300-\u036f])))[\u0300-\u036f]+", r"\1", 
-        normalize( "NFD", valor), 0, re.I
-    )
 
-    return normalize("NFC", valor)
 
 

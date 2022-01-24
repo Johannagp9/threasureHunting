@@ -13,3 +13,7 @@ class GameSerializer(serializers.DocumentSerializer):
         model = Game
         fields = '__all__'
 
+class ChatSerializer(serializers.DocumentSerializer):
+    class Meta:
+        model = Chat
+        fields = "__all__"
