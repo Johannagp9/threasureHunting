@@ -1,0 +1,38 @@
+{% extends 'client/base.html' %}
+{% load static %}
+
+{% block css_files %}
+<link rel="stylesheet" href="{%static "client/style.css"%}">
+<link rel="stylesheet" href="{%static "client/includes/headers.css"%}">
+{% endblock %}
+
+
+{% block title %}Create Game{% endblock %}
+
+
+{% block body %}
+{% include "./includes/header.html" %}
+
+<form action="/create" method="POST">
+    <div class="form-control">
+        <h2>Create Your Own Game and Enjoy</h2>
+    </div>
+    {% csrf_token %}
+    {% for forms in form %}
+        <div class="form-control">
+            {{forms.label_tag}}
+            {{forms}}
+            {{forms.errors}}
+        </div>
+    {% endfor %}
+    <div class="button-div">
+    <button type = "submit">Next</button>
+    </div>
+</form>
+
+{% include "./includes/footer.html" %}
+{% endblock %}
+
+
+
+
