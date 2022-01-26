@@ -1,4 +1,5 @@
 from django import forms
+import folium
 
 class CreateGameForm(forms.Form):
     title = forms.CharField(label="Title", max_length="100", error_messages={
@@ -6,3 +7,7 @@ class CreateGameForm(forms.Form):
         "max_length": "Too long name",
     })
     description = forms.CharField(label="Description", widget=forms.Textarea, max_length="300")
+
+class GameInformationForm(forms.Form):
+    description_information = forms.CharField(label="Description", widget=forms.Textarea, max_length="300")
+
