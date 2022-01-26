@@ -20,12 +20,25 @@ header nav {
     align-items: center;
 }
 
+header nav h2{
+    color: white;
+    position: relative;
+    left: 2rem;
+    margin-right: auto;
+    text-align: left;
+}
+
+header nav img{
+    position: relative;
+    left: 1rem;
+}
+
+
 footer{
-    width: 100%;
+    position: relative;
     height: 3rem;
-    margin: 0px;
-    padding: 0px;
-    position: absolute;
-    bottom: 0px;
+    width: 100%;
+    bottom: 0;
+    padding: 0;
     background-color: #15073C;
 }
