@@ -10,3 +10,4 @@ class CreateGameForm(forms.Form):
 
 class GameInformationForm(forms.Form):
     description_information = forms.CharField(label="Description", widget=forms.Textarea, max_length="300")
+
