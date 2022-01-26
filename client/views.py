@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-from .forms import CreateGameForm
+from .forms import CreateGameForm, GameInformationForm
+import folium
+from folium.plugins import MousePosition
 
 
 # Create your views here.
@@ -11,6 +13,9 @@ LOGIN_TEMPLATE = "login.html"
 # Create your views here.
 def login(request):
     return render(request, LOGIN_TEMPLATE)
+
+
+
 
 def create_game(request):
     if request.method == "POST":
@@ -26,5 +31,43 @@ def create_game(request):
          "form": form,
         })
 
+
+
+
 def game_information(request):
-    return render(request, "client/game_information.html")
+
+    maps = folium.Map(location=[36.74,-4.46], zoom_start=10)
+
+
+    popup = folium.LatLngPopup()
+    maps.add_child(popup)
+
+
+    #MousePosition().add_to(maps)
+    #formatter = "function(num) {return L.Util.formatNum(num, 3) + ' º ';};"
+    #MousePosition(
+    #    position="topright",
+    #    separator=" | ",
+    #    empty_string="NaN",
+    #    lng_first=True,
+    #    num_digits=20,
+    #    prefix="Coordinates:",
+    #    lat_formatter=formatter,
+    #    lng_formatter=formatter,
+    #).add_to(maps)
+    
+    maps.add_child(folium.ClickForMarker(popup="Waypoint"))
+    maps = maps._repr_html_()
+
+    if request.method == "POST":
+        form_information = GameInformationForm(request.POST)
+        if form_information.is_valid():
+            print(form_information.cleaned_data)
+            return HttpResponseRedirect("/create/information")
+    else:
+        form_information = GameInformationForm()
+
+    return render(request, "client/game_information.html",{
+        "form_information": form_information,
+        "maps": maps,
+    })
