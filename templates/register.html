@@ -2,14 +2,19 @@
 {% block title %}
     Threasure Hunting
 {% endblock %}
+{% block  stylesheet %}
+    {{ block.super }}
+    {% load static %}
+    <link href="{% static 'css/register.css' %}" rel="stylesheet"/>
+{% endblock %}
 {% block body %}
     <div class="container">
-        <h3 style="color: white; margin: 50px"><img id="icon" src="https://img.icons8.com/ios-glyphs/30/000000/treasure-map.png" style="margin-bottom: -10px"/>
-            Treasurehunt</h3>
+        <h5 style="color: white; margin-top: 40px;"><img id="icon" src="https://img.icons8.com/ios-glyphs/30/000000/treasure-map.png"/>
+            Treasurehunt</h5>
         <form id="authentication_form" action="{% url 'register' %}"
               method="post" enctype="multipart/form-data"> {% csrf_token %}
 
-            <div class="container" align="center">
+            <div class="container">
                 <br>
         <!---MENSAJES-->
     {% if messages %}
@@ -21,27 +26,26 @@
         {% endfor %}
     {% endif %}
     <!---->
-                <div class="container-fluid">
+                <div class="container">
                 <h2 style="color: white;">&nbsp;Fill your Information</h2>
                 <br>
-                    <div class="container" style="background-color: white;">
-                <div class="mb-3"><label style="color: white;" class="form-label">Username</label>
-                    <input class="form-control" type="text" name="name" required>
-                </div>
-                    <div class="mb-3"><label style="color: white;" class="form-label">Date of Birth</label>
-                    <input class="form-control" type="text" name="date" required>
-                </div>
+                    <div class="container-info">
+                        <label class="form-label" style="margin-left: 30px; margin-top: 30px;">Username</label>
+                    <input class="form-control" type="text" name="name" required/>
+                        <label class="form-label" style="margin-left: 30px; margin-top: 30px;">Date of Birth</label>
+                    <input class="form-control" type="date" name="date" required/>
+
+                        <button class="btn btn-dark" type="submit"
+                                style="margin: 30px; background-color: #F58310; color: white;
+                                box-shadow: 0px 3px 6px #00000029; border-color: #F58310; width: 400px;">
+                            Sign in</button>
+
                         </div>
-                    <button class="btn btn-outline" type="submit" style="margin: 30px">Sign in</button>
             </div>
-
             </div>
-
             </form>
     </div>
 {% endblock %}
 {% block javascripts %}
-    {% load static %}
     {{ block.super }}
-    {% load static %}
 {% endblock %}
