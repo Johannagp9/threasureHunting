@@ -13,7 +13,7 @@
 {% block body %}
 {% include "./includes/header.html" %}
 
-<form action="/create" method="POST">
+<form action="/create" method="POST" enctype="multipart/form-data">
     <div class="form-control">
         <h2>Create Your Own Game and Enjoy</h2>
     </div>
@@ -25,8 +25,8 @@
             {{forms.errors}}
         </div>
     {% endfor %}
-    <div class="button-div">
-    <button type = "submit">Next</button>
+    <div class="button-div">   
+        <button type = "submit">Next</button>
     </div>
 </form>
 
