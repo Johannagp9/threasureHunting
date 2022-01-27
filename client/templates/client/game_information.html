@@ -10,8 +10,7 @@
 
 {% block body %}
     {% include "./includes/header.html" %}
-
-    <form action="/create/information" method="POST">
+    <form action="/create/information" method="POST" enctype="multipart/form-data">
         <div class="form-control">
             <h2>Treasure Information</h2>
         </div>
@@ -23,10 +22,16 @@
                 {{forms.errors}}
             </div>
         {% endfor %}
-        <div class="button-div">
-        <button type = "submit">Next</button>
+        <div class="form-map">
+            <p>Treasure location</p>
+            {{maps|safe}}
         </div>
-        {{maps|safe}}
+        <div class="form-control">
+            <h2>Clue Information</h2>
+        </div>
+        <div class="button-div">
+        <button type = "submit">Create</button>
+        </div>
     </form>
 
     {% include "./includes/footer.html" %}
