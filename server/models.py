@@ -44,6 +44,7 @@ class Message(EmbeddedDocument):
     message = StringField()
     sender = BooleanField()
     date = DateTimeField()
+    read = BooleanField()
 
 class Chat(Document):
     sender = ReferenceField(User, required=True)

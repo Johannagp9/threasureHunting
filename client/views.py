@@ -23,14 +23,6 @@ def auth_user(request):
     idinfo = authenticate_user(id_token)
     if idinfo is not None:
         return render(request, REGISTER_USER_TEMPLATE)
-        users = get_user_by_token(idinfo['sub'])
-        check_response(request, user)
-        if users is None:
-            request.session['token'] = idinfo
-            return render(request, REGISTER_USER_TEMPLATE)
-        else:
-            request.session['user'] = users[0]
-            return redirect("/home")
     else:
         return render(request, LOGIN_TEMPLATE)
 
@@ -64,3 +56,9 @@ def guardar_usuario(request):
 def logout(request):
     request.session['user'] = None
     return render(request, LOGIN_TEMPLATE)
+
+
+
+@csrf_exempt
+def index(request):
+    return render(request, "base.html")
