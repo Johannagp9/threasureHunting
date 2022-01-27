@@ -14,14 +14,23 @@ LOGIN_TEMPLATE = "login.html"
 def login(request):
     return render(request, LOGIN_TEMPLATE)
 
+def store_image_create(file):
+    with open("uploads/image.jpg", "wb+") as dest:
+        for chunk in file.chunks():
+            dest.write(chunk)
 
+def store_image_treasure(file):
+    with open("uploads/treasure.jpg", "wb+") as dest:
+        for chunk in file.chunks():
+            dest.write(chunk)
 
 
 def create_game(request):
     if request.method == "POST":
-        form = CreateGameForm(request.POST)
+        form = CreateGameForm(request.POST, request.FILES)
         if form.is_valid():
             print(form.cleaned_data)
+            store_image_create(request.FILES["user_image"])
             return HttpResponseRedirect("/create/information")
 
     else:
@@ -41,7 +50,8 @@ def game_information(request):
 
     popup = folium.LatLngPopup()
     maps.add_child(popup)
-
+    maps.add_child(folium.ClickForMarker(popup="Waypoint"))
+    maps = maps._repr_html_()
 
     #MousePosition().add_to(maps)
     #formatter = "function(num) {return L.Util.formatNum(num, 3) + ' º ';};"
@@ -56,12 +66,12 @@ def game_information(request):
     #    lng_formatter=formatter,
     #).add_to(maps)
     
-    maps.add_child(folium.ClickForMarker(popup="Waypoint"))
-    maps = maps._repr_html_()
 
     if request.method == "POST":
-        form_information = GameInformationForm(request.POST)
+        print("test")
+        form_information = GameInformationForm(request.POST, request.FILES)
         if form_information.is_valid():
+            store_image_treasure(request.FILES["user_image_2"])
             print(form_information.cleaned_data)
             return HttpResponseRedirect("/create/information")
     else:
