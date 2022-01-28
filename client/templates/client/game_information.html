@@ -12,24 +12,37 @@
     {% include "./includes/header.html" %}
     <form action="/create/information" method="POST" enctype="multipart/form-data">
         <div class="form-control">
-            <h2>Treasure Information</h2>
+            <h1>Treasure Information</h1>
         </div>
         {% csrf_token %}
-        {% for forms in form_information %}
-            <div class="form-control">
-                {{forms.label_tag}}
-                {{forms}}
-                {{forms.errors}}
-            </div>
-        {% endfor %}
+        <div class="form-control">
+            {{form_information.description_information.label_tag}}
+            {{form_information.description_information}}
+            {{form_information.description_information.errors}}
+        </div>
+        <div class="form-control">
+            {{form_information.user_image_2.label_tag}}
+            {{form_information.user_image_2}}
+            {{form_information.user_image_2.errors}}
+        </div>
         <div class="form-map">
             <p>Treasure location</p>
             {{maps|safe}}
         </div>
         <div class="form-control">
-            <h2>Clue Information</h2>
+            <h1>Clue Information</h1>
+        </div>
+        <div class="form-control">
+            {{form_information.description_information_clue.label_tag}}
+            {{form_information.description_information_clue}}
+            {{form_information.description_information_clue.errors}}
+        </div>
+        <div class="form-map">
+            <p>Clue location</p>
+            {{maps|safe}}
         </div>
         <div class="button-div">
+        <button type = "submit" class ="add-another">Add another treasure</button>
         <button type = "submit">Create</button>
         </div>
     </form>
