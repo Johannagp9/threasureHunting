@@ -1,11 +1,7 @@
-@import url(//db.onlinewebfonts.com/c/aae462773966100890bdfe4a8188cc0a?family=Marker+Felt);
+@import url('https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@100;200;300;400;500;600;700&family=Teko:wght@300&display=swap');
 
 body {
-    font-family: 'Marker Felt';
-}
-
-h1 {
-    color: rgb(255, 255, 255);
+    font-family: 'Saira Condensed';
 }
 
 button{
@@ -16,12 +12,23 @@ button{
     padding: 0.5rem;
     padding-left: 3rem;
     padding-right: 3rem;
-    font-family: 'Marker Felt';
-    font-size: 120%;
+    font-family: 'Saira Condensed';
+    font-size: 150%;
+    font-weight: 800;
     cursor: pointer;
     margin: 1rem auto;
     align-items: center;
     box-shadow: 0px 3px 6px #00000029;
+}
+
+.add-another{
+    background: #FFFFFF;
+    color: black; 
+}
+
+.add-another:hover,
+.add-another:active{
+    background-color: #f3f3f3;
 }
 
 .button-div{
@@ -45,7 +52,7 @@ form {
 }
 
 
-.form-control h2{
+.form-control h1{
     text-align: center;
     color: #F58310;
     margin: 1rem auto;
@@ -68,6 +75,8 @@ form {
     margin: 1rem auto;
     color: black;
     text-align: center;
+    font-size: 120%;
+    font-weight: 800;
 }
 
 .form-control textarea{
@@ -79,5 +88,19 @@ form {
     border-radius: 10px;
     border: none;
     font-size: 130%;
-    font-family: 'Marker Felt';
+    font-family: 'Saira Condensed';
+}
+
+.form-map{
+    width: 25rem;
+    margin: 1rem auto;
+}
+
+.form-map p{
+    display: block;
+    margin: 1rem auto;
+    color: rgb(0, 0, 0);
+    text-align: center;
+    font-size: 120%;
+    font-weight: 800;
 }
