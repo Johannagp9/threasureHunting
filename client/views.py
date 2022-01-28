@@ -46,8 +46,6 @@ def create_game(request):
 def game_information(request):
 
     maps = folium.Map(location=[36.74,-4.46], zoom_start=10)
-
-
     popup = folium.LatLngPopup()
     maps.add_child(popup)
     maps.add_child(folium.ClickForMarker(popup="Waypoint"))
