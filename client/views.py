@@ -22,7 +22,14 @@ def auth_user(request):
     id_token = request.POST.get('token')
     idinfo = authenticate_user(id_token)
     if idinfo is not None:
-        return render(request, REGISTER_USER_TEMPLATE)
+        user = get_user_by_token(idinfo['sub'])
+        check_response(request, user)
+        if user is None:
+            request.session['token'] = idinfo
+            return render(request, REGISTER_USER_TEMPLATE)
+        else:
+            request.session['user'] = user[0]
+            return redirect("/home")
     else:
         return render(request, LOGIN_TEMPLATE)
 
@@ -33,15 +40,17 @@ def check_response(request, response):
 
 
 @cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
-def guardar_usuario(request):
+def save_user(request):
 
     idinfo = request.session.get("token")
+    print(idinfo)
     user = {"google_id": idinfo['sub'],
                "name": request.POST.get("name"),
                "email": idinfo['email'],
+                "birth_date": request.POST.get("date"),
                "admin": False}
-    response = create_user(user, idinfo['sub'])
 
+    response = create_user(user, idinfo['sub'])
     if response:
         messages.success(request, "You just signed up for the treasure hunt!")
         users = get_user_by_token(idinfo['sub'])

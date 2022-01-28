@@ -19,7 +19,7 @@ from django.conf.urls import include
 from client.views import login
 
 urlpatterns = [
-##  path('',login),
+    path('',login),
     path('admin/', admin.site.urls),
     path('api/', include('server.urls')),
     path('', include('client.urls')),
