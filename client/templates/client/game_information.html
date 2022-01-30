@@ -10,43 +10,78 @@
 
 {% block body %}
     {% include "./includes/header.html" %}
-    <form action="/create/information" method="POST" enctype="multipart/form-data">
-        <div class="form-control">
-            <h1>Treasure Information</h1>
-        </div>
-        {% csrf_token %}
-        <div class="form-control">
-            {{form_information.description_information.label_tag}}
-            {{form_information.description_information}}
-            {{form_information.description_information.errors}}
-        </div>
-        <div class="form-control">
-            {{form_information.user_image_2.label_tag}}
-            {{form_information.user_image_2}}
-            {{form_information.user_image_2.errors}}
-        </div>
+    <div class = "form-div">
+        <form action="/create/information" method="POST" enctype="multipart/form-data">
+            <div class="form-control">
+                <h1>Treasure Information</h1>
+            </div>
+            {% csrf_token %}
+            <div class="form-control">
+                {{form_information.description_information.label_tag}}
+                {{form_information.description_information}}
+                {{form_information.description_information.errors}}
+            </div>
+            <div class="form-control">
+                {{form_information.user_image_2.label_tag}}
+                {{form_information.user_image_2}}
+                {{form_information.user_image_2.errors}}
+            </div>
+
+            <div class="form-control">
+                <h1>Clue Information</h1>
+            </div>
+            <div class="form-control">
+                {{form_information.description_information_clue.label_tag}}
+                {{form_information.description_information_clue}}
+                {{form_information.description_information_clue.errors}}
+            </div>
+
+            <div class="button-div">
+                <button type = "submit" class ="add-another" name = "another">Add another treasure</button>
+                <button type = "submit" name = "create">Create</button>
+            </div>
+        </form>
+            <div class="form-control">
+                <p>Type treasure localization</p>
+                <input type="text" id="map_treasure" required="required" name="input_localization">
+            </div>
         <div class="form-map">
             <p>Treasure location</p>
-            {{maps|safe}}
+            <div id="mapId">
+                {{maps|safe}}
+            </div>
         </div>
-        <div class="form-control">
-            <h1>Clue Information</h1>
-        </div>
-        <div class="form-control">
-            {{form_information.description_information_clue.label_tag}}
-            {{form_information.description_information_clue}}
-            {{form_information.description_information_clue.errors}}
-        </div>
-        <div class="form-map">
-            <p>Clue location</p>
-            {{maps|safe}}
-        </div>
-        <div class="button-div">
-        <button type = "submit" class ="add-another">Add another treasure</button>
-        <button type = "submit">Create</button>
-        </div>
-    </form>
+    </div>
 
+    {% endblock body %}
     {% include "./includes/footer.html" %}
-{% endblock body %}
+    {% block javascripts %}
+    {{ block.super }}
+    <script>
+
+        $("#map_treasure").keypress( function (e) {
+            if (e.keyCode === 13 ) {    
+                calculate_location()
+            }
+        })
+
+        function calculate_location() {
+            var ubicacion = document.getElementById("map_treasure").value;
+            $.ajax({
+                type: 'POST',
+                url: '{% url 'maps' %}',
+                data: {
+                    location: ubicacion
+                },
+                success: function (data) {
+                    $("#mapId").html(data);
+                },
+                error: function (data) {
+                    console.log(data);
+                },
+            });
+        }
+    </script>
+    {% endblock %}
+
 

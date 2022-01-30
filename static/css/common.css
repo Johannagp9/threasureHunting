@@ -1,0 +1,9 @@
+
+.body{
+    background-color: #15073C;
+    font-family: "Marker Felt";
+}
+
+#icon{
+    -webkit-filter: invert(100%);
+}

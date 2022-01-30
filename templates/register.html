@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}
+    Threasure Hunting
+{% endblock %}
+{% block  stylesheet %}
+    {{ block.super }}
+    {% load static %}
+    <link href="{% static 'css/register.css' %}" rel="stylesheet"/>
+{% endblock %}
+{% block body %}
+    <div class="container">
+        <h5 style="color: white; margin-top: 40px;"><img id="icon" src="https://img.icons8.com/ios-glyphs/30/000000/treasure-map.png"/>
+            Treasurehunt</h5>
+        <form id="authentication_form" action="{% url 'register' %}"
+              method="post" enctype="multipart/form-data"> {% csrf_token %}
+
+            <div class="container">
+                <br>
+        <!---MENSAJES-->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}success
+        {% elif  message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}danger{% else %}secondary{% endif %}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    <!---->
+                <div class="container">
+                <h2 style="color: white;">&nbsp;Fill your Information</h2>
+                <br>
+                    <div class="container-info">
+                        <label class="form-label" style="margin-left: 30px; margin-top: 30px;">Username</label>
+                    <input class="form-control" type="text" name="name" required/>
+                        <label class="form-label" style="margin-left: 30px; margin-top: 30px;">Date of Birth</label>
+                    <input class="form-control" type="date" name="date" required/>
+
+                        <button class="btn btn-dark" type="submit"
+                                style="margin: 30px; background-color: #F58310; color: white;
+                                box-shadow: 0px 3px 6px #00000029; border-color: #F58310; width: 400px;">
+                            Sign in</button>
+
+                        </div>
+            </div>
+            </div>
+            </form>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ block.super }}
+{% endblock %}
