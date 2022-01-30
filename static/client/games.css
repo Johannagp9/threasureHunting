@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@100;200;300;400;500;600;700&family=Teko:wght@300&display=swap');
+
+body {
+  font-family: 'Teko', sans-serif !important;
+}
+
+.game-card {
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.game-card-shadow {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.game-card-image {
+  position: relative;
+}
+
+.game-status {
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 4px 12px;
+  display: inline-block;
+  border-bottom-left-radius: 5px;
+}
+
+.game-status-active {
+  background: green;
+  color: white;
+  border-top-right-radius: 5px;
+}
+
+.game-status-inactive {
+  background: red;
+  color: white;
+  border-top-right-radius: 5px;
+}
+
+.game-card-image>.image {
+  max-width: 100%;
+  width: 100%;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+.game-card-content {
+  padding: 8px;
+}
+
+.game-card-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.game-card-description {
+  font-size: 16px;
+  margin-bottom: 8px;
+  color: #777;
+  text-align: center;
+  font-weight: 300;
+}
+
+.game-card-labels {
+  padding: 8px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.game-card-labels .game-card-label {
+  display: inline-block;
+  display: flex;
+  align-items: center;
+}
+
+.game-card-labels .game-card-label img {
+  width: 20px;
+  height: 20px;
+}
+
+.game-card-labels .game-card-label span {
+  margin-left: 8px;
+}
