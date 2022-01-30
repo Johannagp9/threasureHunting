@@ -7,6 +7,7 @@
     {% load static %}
     <link rel="stylesheet" href='{% static "bootstrap/css/bootstrap.min.css" %}'>
     <link rel="stylesheet" href='{% static "fonts/simple-line-icons.min.css" %}'>
+    <link href="{% static 'css/show-game.css' %}" rel="stylesheet"/>
 {% endblock %}
 
 {% block content %}
@@ -125,33 +126,23 @@
         <br/>
 
         <div id="loc" class="card">
-            <div class="card-header">
-                <i class="fa fa-map-marked-alt"></i> Location
-            </div>
             <div class="card-body" style="height: auto;">
+                <div class="form-map">
                 <p>{{ game.location }}</p>
-
+                <div id="mapId">
+                {{maps|safe}}
+                </div>
+                </div>
 
             </div>
         </div>
-
-
         <br/>
 
-        <br/>
-
-        <br/>
         <div id="par" class="card">
             <div class="card-header">
                 <i class="fa fa-users"></i> Players
             </div>
             <div class="card-body" style="height: auto;">
-
-
-
-
-
-
 
             </div>
         </div>

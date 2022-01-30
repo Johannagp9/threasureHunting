@@ -63,6 +63,11 @@ class UserList(generics.ListCreateAPIView):
          #   return HttpResponse('Unauthorized', status=401)
         return self.create(request, *args, **kwargs)
 
+    def filter_queryset(self, queryset):
+
+        filter = UserFilter(self.request.query_params, queryset=queryset)
+        return filter.qs
+
 
 @method_decorator(decorators, name='dispatch')
 class UserDetail(generics.RetrieveUpdateDestroyAPIView):

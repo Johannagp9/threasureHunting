@@ -12,7 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 
 from client.services.game_service import get_game, update_game
-from client.services.service import authenticate_user, get_coordinates
+from client.services.service import authenticate_user, get_coordinates, get_map
 from client.services.user_service import get_user_by_token, create_user, get_user
 
 LOGIN_TEMPLATE = "login.html"
@@ -50,7 +50,6 @@ def check_response(request, response):
 def save_user(request):
 
     idinfo = request.session.get("token")
-    print(idinfo)
     user = {"google_id": idinfo['sub'],
                "name": request.POST.get("name"),
                "email": idinfo['email'],
@@ -106,7 +105,7 @@ def show_game(request, id):
             game['players'].push(instance['user'])
 
 
-    dict = {"game": game, "user": user}
+    dict = {"game": game, "user": user, "maps": get_map(game['location'])}
     return render(request, SHOW_GAME_TEMPLATE, dict)
 
 

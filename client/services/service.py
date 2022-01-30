@@ -8,6 +8,8 @@ from django.http import HttpResponse
 from constants import APP_NAME
 import re
 from unicodedata import normalize
+import folium
+from folium.plugins import MousePosition
 
 headers = {'content_type': 'application/json'}
 
@@ -118,6 +120,18 @@ def calculate_min_distance(location,graffiti_lat,graffiti_long):
         coordinates=get_coordinates(location)
         return math.sqrt(pow(graffiti_lat-coordinates['lat'],2)+pow(graffiti_long-coordinates['long'],2))
     return sys.float_info.max
+
+
+def get_map(location):
+    coordinates_dict = get_coordinates(location)
+    coordinates = (coordinates_dict['lat'], coordinates_dict['long'])
+    maps = folium.Map(location=coordinates, zoom_start=10)
+    print("jestem get_map ->",coordinates)
+    folium.Marker(
+            location=coordinates
+        ).add_to(maps)
+    maps = maps._repr_html_()
+    return maps
 
 
 

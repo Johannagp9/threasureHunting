@@ -11,6 +11,25 @@
     margin-left: 30px;
     margin-right: 30px;
     box-shadow: 0px 3px 6px #00000029;
-    max-width: 200px;
+    max-width: 300px;
 }
 
+.h2{
+    color: white;
+}
+
+#btnS{
+    margin: 30px;
+    background-color: #F58310;
+    color: white;
+    box-shadow: 0px 3px 6px #00000029;
+    border-color: #F58310;
+    width: 400px;
+}
+
+#backImg{
+    margin-left: -30px;
+    width: 75%;
+    top: 206px;
+    left: 822px;
+}

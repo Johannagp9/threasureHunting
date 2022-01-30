@@ -7,3 +7,9 @@
 #icon{
     -webkit-filter: invert(100%);
 }
+
+#btnOk{
+    background-color: #F58310;
+    color: white;
+    border-color: #F58310;
+}
