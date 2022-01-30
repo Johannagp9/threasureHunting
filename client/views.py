@@ -1,16 +1,23 @@
+import datetime
+import json
+
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
 # Create your views here.
 ##TEMPLATES
+
 from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
-from client.services.service import authenticate_user
-from client.services.user_service import get_user_by_token, create_user
+
+from client.services.game_service import get_game, update_game
+from client.services.service import authenticate_user, get_coordinates
+from client.services.user_service import get_user_by_token, create_user, get_user
 
 LOGIN_TEMPLATE = "login.html"
 REGISTER_USER_TEMPLATE = "register.html"
+SHOW_GAME_TEMPLATE = "show-game.html"
 
 
 # Create your views here.
@@ -71,3 +78,64 @@ def logout(request):
 @csrf_exempt
 def index(request):
     return render(request, "base.html")
+
+
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
+def show_game(request, id):
+    try:
+        user = request.session['user']
+        if user is None:
+            return render(request, LOGIN_TEMPLATE)
+    except:
+        return render(request, LOGIN_TEMPLATE)
+
+    game = get_game('61f5a32d75143a90d5ebad66', user['google_id'])
+        #get_game(id, user['google_id'])
+    check_response(request, game)
+    game['creator'] = get_user(game['creator'], user['google_id'])
+    check_response(request, game['creator'])
+
+    if game['winner'] is not None:
+        game['winner'] = get_user(game['winner'], user['google_id'])
+        check_response(request, game['winner'])
+
+    if game['instances'] is not None and len(game['instances']):
+        game['players'] = []
+        for instance in game['instances']:
+            instance['user'] = get_user(instance['user'], user['google_id'])
+            game['players'].push(instance['user'])
+
+
+    dict = {"game": game, "user": user}
+    return render(request, SHOW_GAME_TEMPLATE, dict)
+
+
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
+def restart_game(request, id):
+    try:
+        user = request.session['user']
+        if user is None:
+            return render(request, LOGIN_TEMPLATE)
+    except:
+        return render(request, LOGIN_TEMPLATE)
+
+    game = get_game(id, user['google_id'])
+
+    if game['instances'] is not None and len(game['instances']):
+        for instance in game['instances']:
+            instance['complete'] = False
+
+    if game['treasures'] is not None and len(game['treasures']):
+        for treasure in game['treasures']:
+            if treasure['instances'] is not None and len(treasure['instances']):
+                treasure['instances'] = []
+
+    game['restart_date'] = datetime.datetime.now().__str__()
+
+    response = update_game(id, game, user['google_id'])
+    check_response(request, response)
+    if response:
+        messages.success(request, "Game has been reset!")
+    else:
+        messages.error(request, "An error has occurred, your game has not been restarted.")
+    return redirect("/game/" + id)

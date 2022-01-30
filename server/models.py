@@ -1,3 +1,5 @@
+from sqlite3.dbapi2 import Date
+
 from mongoengine import *
 import datetime
 
@@ -33,12 +35,14 @@ class Game(Document):
     title = StringField(max_length=255)
     description = StringField(max_length=5000)
     picture = StringField(max_length=2083)
-    coordinates = StringField(max_length=1000)
+    location = StringField(max_length=1000)
+    restart_date = DateField()
+    #coordinates = ListField(FloatField)
     instances = ListField(ReferenceField(GameInstance))
     treasures = ListField(EmbeddedDocumentField(Treasure))
     creator = ReferenceField(User, required=True, reverse_delete_rule=CASCADE)
     active = BooleanField()
-    winner =  ReferenceField(User, required=False)
+    winner = ReferenceField(User, required=False)
 
 class Message(EmbeddedDocument):
     message = StringField()

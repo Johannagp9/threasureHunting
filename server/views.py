@@ -49,18 +49,18 @@ class UserList(generics.ListCreateAPIView):
     serializer_class = UserSerializer
 
     def get(self, request, *args, **kwargs):
-        token = request.headers['Authorization']
-        print("TOKEN SERVER " + token)
-        result = cache.get(token)
-        if result is None:
-            return HttpResponse('Unauthorized', status=401)
+        #token = request.headers['Authorization']
+        #print("TOKEN SERVER " + token)
+        #result = cache.get(token)
+        #if result is None:
+         #   return HttpResponse('Unauthorized', status=401)
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        token = request.headers['Authorization']
-        result = cache.get(token)
-        if result is None:
-            return HttpResponse('Unauthorized', status=401)
+        #token = request.headers['Authorization']
+        #result = cache.get(token)
+        #if result is None:
+         #   return HttpResponse('Unauthorized', status=401)
         return self.create(request, *args, **kwargs)
 
 
@@ -69,24 +69,24 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     def get(self, request, *args, **kwargs):
-        token = request.headers['Authorization']
-        result = cache.get(token)
-        if result is None:
-            return HttpResponse('Unauthorized', status=401)
+        # token = request.headers['Authorization']
+        # result = cache.get(token)
+        # if result is None:
+        #   return HttpResponse('Unauthorized', status=401)
         return self.retrieve(request, *args, **kwargs)
 
     def put(self, request, *args, **kwargs):
-        token = request.headers['Authorization']
-        result = cache.get(token)
-        if result is None:
-            return HttpResponse('Unauthorized', status=401)
+        # token = request.headers['Authorization']
+        # result = cache.get(token)
+        # if result is None:
+        #   return HttpResponse('Unauthorized', status=401)
         return self.update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
-        token = request.headers['Authorization']
-        result = cache.get(token)
-        if result is None:
-            return HttpResponse('Unauthorized', status=401)
+        # token = request.headers['Authorization']
+        # result = cache.get(token)
+        # if result is None:
+        #   return HttpResponse('Unauthorized', status=401)
         return self.destroy(request, *args, **kwargs)
 
 @method_decorator(decorators, name='dispatch')
@@ -95,22 +95,20 @@ class GameList(generics.ListCreateAPIView):
     serializer_class = GameSerializer
 
     def get(self, request, *args, **kwargs):
-        token = request.headers['Authorization']
-        result = cache.get(token)
-        if result is None:
-            return HttpResponse('Unauthorized', status=401)
+        # token = request.headers['Authorization']
+        # result = cache.get(token)
+        # if result is None:
+        #   return HttpResponse('Unauthorized', status=401)
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        token = request.headers['Authorization']
-        result = cache.get(token)
-        if result is None:
-            return HttpResponse('Unauthorized', status=401)
+        # token = request.headers['Authorization']
+        # result = cache.get(token)
+        # if result is None:
+        #   return HttpResponse('Unauthorized', status=401)
         return self.create(request, *args, **kwargs)
 
-    def filter_queryset(self, queryset):
-        filter_game= GameFilter(self.request.query_params, queryset=queryset)
-        return filter_game.qs
+
 
 
 @method_decorator(decorators, name='dispatch')
@@ -119,24 +117,24 @@ class GameDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = GameSerializer
 
     def get(self, request, *args, **kwargs):
-        token = request.headers['Authorization']
-        result = cache.get(token)
-        if result is None:
-            return HttpResponse('Unauthorized', status=401)
+        # token = request.headers['Authorization']
+        # result = cache.get(token)
+        # if result is None:
+        #   return HttpResponse('Unauthorized', status=401)
         return self.retrieve(request, *args, **kwargs)
 
     def put(self, request, *args, **kwargs):
-        token = request.headers['Authorization']
-        result = cache.get(token)
-        if result is None:
-            return HttpResponse('Unauthorized', status=401)
+        # token = request.headers['Authorization']
+        # result = cache.get(token)
+        # if result is None:
+        #   return HttpResponse('Unauthorized', status=401)
         return self.update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
-        token = request.headers['Authorization']
-        result = cache.get(token)
-        if result is None:
-            return HttpResponse('Unauthorized', status=401)
+        # token = request.headers['Authorization']
+        # result = cache.get(token)
+        # if result is None:
+        #   return HttpResponse('Unauthorized', status=401)
         return self.destroy(request, *args, **kwargs)
 
 @method_decorator(decorators, name='dispatch')
@@ -144,32 +142,32 @@ class ChatList(generics.ListCreateAPIView):
     queryset = Chat.objects.all()
     serializer_class = ChatSerializer
 
-    #def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
     #    token = request.headers['Authorization']
     #    result = cache.get(token)
     #    if result is None:
     #        return HttpResponse('Unauthorized', status=401)
-    #    return self.retrieve(request, *args, **kwargs)
+        return self.retrieve(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        token = request.headers['Authorization']
-        result = cache.get(token)
-        if result is None:
-            return HttpResponse('Unauthorized', status=401)
+        # token = request.headers['Authorization']
+        # result = cache.get(token)
+        # if result is None:
+        #   return HttpResponse('Unauthorized', status=401)
         return self.create(request, *args, **kwargs)
 
     def put(self, request, *args, **kwargs):
-        token = request.headers['Authorization']
-        result = cache.get(token)
-        if result is None:
-            return HttpResponse('Unauthorized', status=401)
+        # token = request.headers['Authorization']
+        # result = cache.get(token)
+        # if result is None:
+        #   return HttpResponse('Unauthorized', status=401)
         return self.update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
-        token = request.headers['Authorization']
-        result = cache.get(token)
-        if result is None:
-            return HttpResponse('Unauthorized', status=401)
+        # token = request.headers['Authorization']
+        # result = cache.get(token)
+        # if result is None:
+        #   return HttpResponse('Unauthorized', status=401)
         return self.destroy(request, *args, **kwargs)
 
     def filter_queryset(self, queryset):
@@ -186,31 +184,31 @@ class ChatDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ChatSerializer
 
     def get(self, request, *args, **kwargs):
-        token = request.headers['Authorization']
-        result = cache.get(token)
-        if result is None:
-            return HttpResponse('Unauthorized', status=401)
+        # token = request.headers['Authorization']
+        # result = cache.get(token)
+        # if result is None:
+        #   return HttpResponse('Unauthorized', status=401)
         return self.retrieve(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        token = request.headers['Authorization']
-        result = cache.get(token)
-        if result is None:
-            return HttpResponse('Unauthorized', status=401)
+        # token = request.headers['Authorization']
+        # result = cache.get(token)
+        # if result is None:
+        #   return HttpResponse('Unauthorized', status=401)
         return self.create(request, *args, **kwargs)
 
     def put(self, request, *args, **kwargs):
-        token = request.headers['Authorization']
-        result = cache.get(token)
-        if result is None:
-           return HttpResponse('Unauthorized', status=401)
+        # token = request.headers['Authorization']
+        # result = cache.get(token)
+        # if result is None:
+        #   return HttpResponse('Unauthorized', status=401)
         return self.update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
-        token = request.headers['Authorization']
-        result = cache.get(token)
-        if result is None:
-            return HttpResponse('Unauthorized', status=401)
+        # token = request.headers['Authorization']
+        # result = cache.get(token)
+        # if result is None:
+        #   return HttpResponse('Unauthorized', status=401)
         return self.destroy(request, *args, **kwargs)
 
 

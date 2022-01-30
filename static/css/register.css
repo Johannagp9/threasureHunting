@@ -11,17 +11,6 @@
     margin-left: 30px;
     margin-right: 30px;
     box-shadow: 0px 3px 6px #00000029;
-    width: 400px;
+    max-width: 200px;
 }
 
-#btnSign{
-    margin: 30px;
-    background-color: #F58310;
-    color: white;
-    box-shadow: 0px 3px 6px #00000029;
-    border-color: #F58310;
-    width: 400px;
-}
-#btnSign:hover {
-      cursor: pointer;
-    }

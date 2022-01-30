@@ -27,18 +27,25 @@
     {% endif %}
     <!---->
                 <div class="container">
+                    <div class="row">
+        <div class="col-md-5">
                 <h2 style="color: white;">&nbsp;Fill your Information</h2>
                 <br>
                     <div class="container-info">
                         <label class="form-label" style="margin-left: 30px; margin-top: 30px;">Username</label>
-                    <input class="form-control" type="text" name="name" required/>
+                    <input class="form-control" type="text" name="name" maxlength="20" required/>
                         <label class="form-label" style="margin-left: 30px; margin-top: 30px;">Date of Birth</label>
                     <input class="form-control" type="date" name="date" placeholder="YYYY-MM-DD" required/>
-
-                        <button id="btnSign" class="btn btn-dark" type="submit">
+                        <button class="btn btn-dark" type="submit"
+                                style="margin: 30px; background-color: #F58310; color: white; box-shadow: 0px 3px 6px #00000029; border-color: #F58310; width: 400px;">
                             Sign in</button>
 
                         </div>
+            </div>
+    <div class="col-md-7">
+        <img id="backImg" src="https://res.cloudinary.com/dgfxcy2dy/image/upload/v1643401830/Group_45_hmwo04.png"
+             style="margin-left: -30px; width: 75%; top: 206px; left: 822px;">
+    </div>
             </div>
             </div>
             </form>
