@@ -2,8 +2,8 @@
 {% load static %}
 
 {% block css_files %}
-<link rel="stylesheet" href="{%static "client/style.css"%}">
-<link rel="stylesheet" href="{%static "client/includes/headers.css"%}">
+<link rel="stylesheet" href='{%static "client/style.css"%}'>
+<link rel="stylesheet" href='{%static "client/includes/headers.css"%}'>
 {% endblock %}
 
 {% block title %}Game Information{% endblock title %}
@@ -11,6 +11,17 @@
 {% block body %}
     {% include "./includes/header.html" %}
     <div class = "form-div">
+        <div class="form-control">
+            <p>Check possible treasure localization here</p>
+            <input type="text" id="map_treasure" required="required" name="input_localization">
+        </div>
+        <div class="form-map">
+            <p>Treasure location</p>
+            <div id="mapId">
+                {{maps|safe}}
+            </div>
+        </div>
+
         <form id="information-form" action="/create/information" method="POST" enctype="multipart/form-data">
             <div class="form-control">
                 <h1>Treasure Information</h1>
@@ -35,18 +46,15 @@
                 {{form_information.description_information_clue}}
                 {{form_information.description_information_clue.errors}}
             </div>
-        </form>
 
             <div class="form-control">
-                <p>Type treasure localization</p>
-                <input type="text" id="map_treasure" required="required" name="input_localization">
+                <h1>Actual Location of the Treasure</h1>
+                <input type="text" id="actual_location_id" required="required" name="actual_location">
+
             </div>
-        <div class="form-map">
-            <p>Treasure location</p>
-            <div id="mapId">
-                {{maps|safe}}
-            </div>
-        </div>
+       
+        </form>
+
                 
         <div class="button-div">
             <button form="information-form" type = "submit" class ="add-another" name = "another">Add another treasure</button>
@@ -70,7 +78,7 @@
             var ubicacion = document.getElementById("map_treasure").value;
             $.ajax({
                 type: 'POST',
-                url: '{% url 'maps' %}',
+                url: '{% url "maps" %}',
                 data: {
                     location: ubicacion
                 },

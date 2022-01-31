@@ -12,5 +12,6 @@ requests==2.25.0
 django-filter==2.4.0
 
 folium==0.12.1.post1
+Pillow==9.0.0
 
 

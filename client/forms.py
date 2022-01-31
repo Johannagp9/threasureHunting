@@ -13,5 +13,7 @@ class GameInformationForm(forms.Form):
     description_information = forms.CharField(label="Description", widget=forms.Textarea, max_length="300")
     user_image_2 = forms.ImageField()
     description_information_clue = forms.CharField(label="Description", widget=forms.Textarea, max_length="300")
+    actual_location = forms.CharField(
+        label="Description", widget=forms.Textarea, max_length="50")
 
 

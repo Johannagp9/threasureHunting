@@ -63,7 +63,10 @@ def response_2_dict(response):
     return result
 
 
-def get_coordinates(location):
+def _get_coordinates(location):
+    # TODO Debugging
+    print("\n\n_get_coordinates")
+    print(location)
     coordinates = cache.get(location)
     if coordinates is None:
         url_location = "https://nominatim.openstreetmap.org/search?q=" + location + "&format=json&addressdetails=1"
@@ -77,6 +80,8 @@ def get_coordinates(location):
                 cache.set(normalizar(location), coordinates, 3600)
                 return coordinates
         return None
+    print("coordinates")
+    print(coordinates)
     return [coordinates['lat'], coordinates['long']]
 
 
@@ -128,6 +133,15 @@ def create_game(request):
 
 def game_information(request):
 
+
+    print('request')
+    print(request.method)
+    if request.method == "GET":
+        print(request.GET)
+        form_information = GameInformationForm()
+
+    # print(response_2_dict(request))
+
     #if len(json_data["treasure_information"]) > 0:
     #    maps = get_map([json_data["treasure_information"][0]["lat"],json_data["treasure_information"][0]["long"]])
     #else:
@@ -137,15 +151,21 @@ def game_information(request):
     #  pass  
     #maps = get_map([36.72016, -4.42034])
     #print("PRZED form_information->>>>>",request.POST.get('input_localization'))
-    if request.method == "POST":
+    elif request.method == "POST":
         #print("form_information->>>>>",request.POST.get('input_localization'))
-        #coordinates = get_coordinates(request.POST['input_localization'])
+        #coordinates = _get_coordinates(request.POST['input_localization'])
         #print("game_information",coordinates)
+        print(type(request))
+        print(request.POST)
+        print(type(request.POST))
+        form_information = GameInformationForm()
+
         form_information = GameInformationForm(request.POST, request.FILES)
         if form_information.is_valid():
             #print("VALIDform_information->>>>>",request.POST.get('input_localization'))
-            coordinates = get_coordinates(request.POST.get('input_localization'))
-            #coordinates = get_coordinates(request.POST['location'])
+            # TODO change with actual_location
+            coordinates = _get_coordinates(request.POST.get('actual_location'))
+            #coordinates = _get_coordinates(request.POST['location'])
             link = store_image_treasure(request.FILES["user_image_2"])
             json_object = {
                 "description_treasure": form_information.cleaned_data["description_information"], 
@@ -184,7 +204,6 @@ def get_map(coordinates):
         ).add_to(maps)
     maps = maps._repr_html_()
     return maps
-
 
 @csrf_exempt
 def auth_user(request):
@@ -237,7 +256,7 @@ def index(request):
 @csrf_exempt
 def maps(request):
     print("CO TO JEST ->",request)
-    coordinates = get_coordinates(request.POST.get('location'))
+    coordinates = _get_coordinates(request.POST.get('location'))
     if (len(coordinates) == 2):
         maps = get_map(coordinates)
         return  render(request, MAP_TEMPLATE, {"maps":maps})
