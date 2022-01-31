@@ -2,7 +2,6 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from .forms import CreateGameForm, GameInformationForm
 import folium
-from folium.plugins import MousePosition
 import cloudinary.uploader
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -83,6 +82,30 @@ def get_coordinates(location):
 
 
 
+def edit_game(request):
+
+    maps = get_map([54.372158,18.638306])
+    if request.method == "POST":
+        form = CreateGameForm(request.POST, request.FILES)
+        if form.is_valid():
+            data = form.cleaned_data
+            data['user_image'] = store_image_treasure(request.FILES["user_image"])
+            print(data)
+            return HttpResponseRedirect("/create/information")
+    else:
+        form = CreateGameForm()
+
+    return render(request, "client/edit_game.html",{
+         "form": form,
+         "test": range(5),  #number of created Treasures in game
+         "title": "Some name",   #Name of the game that user typed
+         "treasure_description": "This is example of treasure description to make area look like normal area and some more informations here nothjing important", #it would be good to use here list to refer in templates in each iteration to different text
+         "treasure_image": "https://www.polska.travel/images/pl-PL/glowne-miasta/gdansk/gdansk_motlawa_1170.jpg",
+         "clue_description": "This is example of treasure description to make area look like normal area and some more informations here nothjing important",
+         "map": maps
+        })
+
+
 
 
 def create_game(request):
@@ -91,6 +114,7 @@ def create_game(request):
         if form.is_valid():
             data = form.cleaned_data
             data['user_image'] = store_image_treasure(request.FILES["user_image"])
+            print(data)
             return HttpResponseRedirect("/create/information")
     else:
         form = CreateGameForm()
