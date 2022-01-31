@@ -82,8 +82,15 @@ def _get_coordinates(location):
         return None
     print("coordinates")
     print(coordinates)
-    return [coordinates['lat'], coordinates['long']]
-
+    
+    if len(coordinates) > 1:
+        if isinstance(coordinates[0], float) and isinstance(coordinates[1], float):
+            return coordinates
+        else:
+            return [coordinates['lat'], coordinates['long']]
+    else:
+        # TODO add proper error handling
+        return [0, 0]
 
 
 
