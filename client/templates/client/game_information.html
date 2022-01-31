@@ -11,7 +11,7 @@
 {% block body %}
     {% include "./includes/header.html" %}
     <div class = "form-div">
-        <form action="/create/information" method="POST" enctype="multipart/form-data">
+        <form id="information-form" action="/create/information" method="POST" enctype="multipart/form-data">
             <div class="form-control">
                 <h1>Treasure Information</h1>
             </div>
@@ -35,12 +35,8 @@
                 {{form_information.description_information_clue}}
                 {{form_information.description_information_clue.errors}}
             </div>
-
-            <div class="button-div">
-                <button type = "submit" class ="add-another" name = "another">Add another treasure</button>
-                <button type = "submit" name = "create">Create</button>
-            </div>
         </form>
+
             <div class="form-control">
                 <p>Type treasure localization</p>
                 <input type="text" id="map_treasure" required="required" name="input_localization">
@@ -51,10 +47,15 @@
                 {{maps|safe}}
             </div>
         </div>
+                
+        <div class="button-div">
+            <button form="information-form" type = "submit" class ="add-another" name = "another">Add another treasure</button>
+            <button form="information-form" type = "submit" name = "create">Create</button>
+        </div>
     </div>
-
-    {% endblock body %}
     {% include "./includes/footer.html" %}
+    {% endblock body %}
+
     {% block javascripts %}
     {{ block.super }}
     <script>
