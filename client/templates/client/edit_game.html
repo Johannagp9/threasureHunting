@@ -1,0 +1,60 @@
+{% extends 'client/base.html' %}
+{% load static %}
+
+{% block css_files %}
+<link rel="stylesheet" href="{%static "client/style.css"%}">
+<link rel="stylesheet" href="{%static "client/includes/headers.css"%}">
+{% endblock %}
+
+{% block title %}Game Information{% endblock title %}
+
+{% block body %}
+    {% include "./includes/header.html" %}
+    <div class="form-control">
+        <h1>Game Title: {{title}}</h1>
+    </div>
+    {% for i in test %}
+        <div class = "edit-div">
+                {% csrf_token %}
+                <div class="form-control">
+                    <h1>Treasure number {{ i|add:"1" }}</h1>
+                </div>
+                <div class="form-control">
+                    <p>Treasure description</p>
+                    <div class="description">
+                        <p>{{treasure_description}}</p>
+                    </div>
+                </div>
+                <div class="form-control">
+                    <p>Selected image for {{i|add:"1"}} treasure</p>
+                    <img class="image" src={{treasure_image}} alt="connect">
+                </div>
+                <div class="form-control">
+                    {{form_information.description_information_clue.label_tag}}
+                    {{form_information.description_information_clue}}
+                    {{form_information.description_information_clue.errors}}
+                </div>
+
+                <div class="button-div">
+                    <button>Add another treasure</button>
+                </div>
+                <div class="form-control">
+                    <p>Clue description</p>
+                    <div class="description">
+                        <p>{{clue_description}}</p>
+                    </div>
+                </div>
+                <div class="form-control">
+                    <p>Type treasure localization</p>
+                    <div class="div-map">
+                        {{map|safe}}
+                    </div>
+                </div>
+        </div>
+    {% endfor %} 
+    {% include "./includes/footer.html" %}
+    {% endblock body %}
+ 
+
+    {{ block.super }}
+    <script>
