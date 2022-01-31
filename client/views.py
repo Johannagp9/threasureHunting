@@ -202,13 +202,19 @@ def game_information(request):
 def get_map(coordinates):
     maps = folium.Map(location=coordinates, zoom_start=10)
     print("jestem get_map ->",coordinates)
-    folium.Marker(
-            location=coordinates
-        ).add_to(maps)
-    for i in range (0,len(json_data["treasure_information"])):
-        folium.Marker(
-            location=[json_data["treasure_information"][i]["lat"], json_data["treasure_information"][i]["long"]]
-        ).add_to(maps)
+    counter = len(json_data["treasure_information"])+1
+    for i in range (0,counter):
+        if i == 0:
+            folium.Marker(
+                location=coordinates
+            ).add_to(maps)
+            print("go here")
+        else:
+            folium.Marker(
+                location=[json_data["treasure_information"][i-1]["lat"], json_data["treasure_information"][i-1]["long"]]
+            ).add_to(maps)
+            print("else")
+
     maps = maps._repr_html_()
     return maps
 
