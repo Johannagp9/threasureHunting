@@ -122,7 +122,7 @@ def calculate_min_distance(location,graffiti_lat,graffiti_long):
     return sys.float_info.max
 
 
-def get_map(location):
+def get_map(location, treasures, show_treasures):
     coordinates_dict = get_coordinates(location)
     coordinates = (coordinates_dict['lat'], coordinates_dict['long'])
     maps = folium.Map(location=coordinates, zoom_start=10)
@@ -130,6 +130,16 @@ def get_map(location):
     folium.Marker(
             location=coordinates
         ).add_to(maps)
+    if show_treasures:
+        for treasure in treasures:
+            coordinates_dict = get_coordinates(treasure['coordinates'])
+            coordinates = (coordinates_dict['lat'], coordinates_dict['long'])
+            folium.Marker(
+                location=coordinates,
+                radius=8,
+                icon=folium.Icon(color="red"),
+                popup='Clue: '+treasure['clue']
+            ).add_to(maps)
     maps = maps._repr_html_()
     return maps
 

@@ -19,3 +19,9 @@
     font-size: 120%;
     font-weight: 800;
 }
+
+#btnSignup{
+    background-color: #F58310;
+    color: white;
+    border-color: #F58310;
+}

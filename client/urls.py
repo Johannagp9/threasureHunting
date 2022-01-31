@@ -9,4 +9,5 @@ urlpatterns = [
     path('game/<str:id>', views.show_game, name='game'),
     path('restart_game/<str:id>', views.restart_game, name='restart_game'),
     path('logout/', views.logout, name='logout'),
+    path('signup_game/<str:id>', views.signup_game, name='signup_game'),
 ]

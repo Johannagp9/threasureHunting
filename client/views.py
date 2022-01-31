@@ -54,7 +54,7 @@ def save_user(request):
                "name": request.POST.get("name"),
                "email": idinfo['email'],
                 "birth_date": request.POST.get("date"),
-               "admin": False}
+               "admin": idinfo['email'] == 'pruebaparaingweb@gmail.com'}
 
     response = create_user(user, idinfo['sub'])
     if response:
@@ -87,7 +87,7 @@ def show_game(request, id):
             return render(request, LOGIN_TEMPLATE)
     except:
         return render(request, LOGIN_TEMPLATE)
-
+    #'61f708570d5c3eb394ba1001'
     game = get_game('61f5a32d75143a90d5ebad66', user['google_id'])
         #get_game(id, user['google_id'])
     check_response(request, game)
@@ -98,14 +98,20 @@ def show_game(request, id):
         game['winner'] = get_user(game['winner'], user['google_id'])
         check_response(request, game['winner'])
 
+    can_not_signup = False
+
     if game['instances'] is not None and len(game['instances']):
         game['players'] = []
         for instance in game['instances']:
+            can_not_signup = instance['user'] == user['id']
             instance['user'] = get_user(instance['user'], user['google_id'])
-            game['players'].push(instance['user'])
+            game['players'].append(instance['user'])
 
 
-    dict = {"game": game, "user": user, "maps": get_map(game['location'])}
+    show_treasures = user['admin'] or user['id'] == game['creator']['id']
+
+    dict = {"game": game, "user": user, "maps": get_map(game['location'], game['treasures'], show_treasures),
+            'canNotSignup': can_not_signup, "show_treasures": show_treasures}
     return render(request, SHOW_GAME_TEMPLATE, dict)
 
 
@@ -119,7 +125,6 @@ def restart_game(request, id):
         return render(request, LOGIN_TEMPLATE)
 
     game = get_game(id, user['google_id'])
-
     if game['instances'] is not None and len(game['instances']):
         for instance in game['instances']:
             instance['complete'] = False
@@ -129,8 +134,8 @@ def restart_game(request, id):
             if treasure['instances'] is not None and len(treasure['instances']):
                 treasure['instances'] = []
 
-    game['restart_date'] = datetime.datetime.now().__str__()
-
+    game['restart_date'] = datetime.datetime.utcnow().date().today().__str__()
+    game['winner'] = None
     response = update_game(id, game, user['google_id'])
     check_response(request, response)
     if response:
@@ -138,3 +143,31 @@ def restart_game(request, id):
     else:
         messages.error(request, "An error has occurred, your game has not been restarted.")
     return redirect("/game/" + id)
+
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
+def signup_game(request, id):
+    try:
+        user = request.session['user']
+        if user is None:
+            return render(request, LOGIN_TEMPLATE)
+    except:
+        return render(request, LOGIN_TEMPLATE)
+
+    game = get_game(id, user['google_id'])
+    if game['instances'] is None:
+        game['instances'] = []
+
+    instance = {}
+    instance['complete'] = False
+    instance['user'] = user['id']
+    game['instances'].append(instance)
+    print(game)
+    response = update_game(id, game, user['google_id'])
+    check_response(request, response)
+    print(response.__dict__)
+    if response:
+        messages.success(request, "You signed up for the game!")
+    else:
+        messages.error(request, "An error has occurred, you have not signed up for the game.")
+    return redirect("/game/" + id)
+
