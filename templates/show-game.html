@@ -162,7 +162,7 @@
 <br/>
     <div id="tre">
     <div class="row d-flex d-sm-flex justify-content-rigth justify-content-sm-rigth">
-            {% for treasure in game.treasures %}
+            {% for treasure in treasures %}
                 <div class="col-md-3" style="width: 300px;height: 500px">
                     <div class="card cards-shadown cards-hover" data-aos="slide-right" data-aos-duration="950">
                         {% if show_treasures %}
@@ -170,10 +170,15 @@
                             <i class="fas fa-globe-africa"></i> {{ treasure.coordinates }}
                         </div>
                         {% endif %}
-                        <a href="/treasure/{{ treasure.id }}">
+                    {% if canNotSignup or show_treasures %}
+                        <a href="{% url 'treasure' treasure.id game.creator.id %}">
                             <img class="card-img-top" src="{{ treasure.picture }}"
                                  alt="Card image cap">
                         </a>
+                        {% else %}
+                            <img class="card-img-top" src="{{ treasure.picture }}"
+                                 alt="Card image cap">
+                    {% endif %}
                         <div class="card-body">
                             <label style="font-weight: bold">Clue </label>
                             <p>{{ treasure.clue }}

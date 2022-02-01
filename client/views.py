@@ -13,11 +13,13 @@ from django.contrib import messages
 
 from client.services.game_service import get_game, update_game
 from client.services.service import authenticate_user, get_coordinates, get_map
+from client.services.treasure_service import get_treasure, delete_treasure, update_treasure
 from client.services.user_service import get_user_by_token, create_user, get_user
 
 LOGIN_TEMPLATE = "login.html"
 REGISTER_USER_TEMPLATE = "register.html"
 SHOW_GAME_TEMPLATE = "show-game.html"
+SHOW_TREASURE_TEMPLATE = "show-treasure.html"
 
 
 # Create your views here.
@@ -107,11 +109,19 @@ def show_game(request, id):
             instance['user'] = get_user(instance['user'], user['google_id'])
             game['players'].append(instance['user'])
 
+    treasures = []
+
+    if game['treasures'] is not None and len(game['treasures']):
+        for treasure in game['treasures']:
+            treasure = get_treasure(treasure, user['google_id'])
+            check_response(request, treasure)
+            treasures.append(treasure)
+
 
     show_treasures = user['admin'] or user['id'] == game['creator']['id']
-
-    dict = {"game": game, "user": user, "maps": get_map(game['location'], game['treasures'], show_treasures),
-            'canNotSignup': can_not_signup, "show_treasures": show_treasures}
+    print(treasures)
+    dict = {"game": game, "user": user, "maps": get_map(game['location'], treasures, show_treasures),
+            'canNotSignup': can_not_signup, "show_treasures": show_treasures, 'treasures': treasures}
     return render(request, SHOW_GAME_TEMPLATE, dict)
 
 
@@ -131,8 +141,15 @@ def restart_game(request, id):
 
     if game['treasures'] is not None and len(game['treasures']):
         for treasure in game['treasures']:
+            treasure = get_treasure(treasure, user['google_id'])
+            check_response(request, treasure)
             if treasure['instances'] is not None and len(treasure['instances']):
+                for instance in treasure['instances']:
+                    response = delete_treasure(instance['id'], user['google_id'])
+                    check_response(request, response)
                 treasure['instances'] = []
+                response = update_treasure(id, treasure, user['google_id'])
+                check_response(request, response)
 
     game['restart_date'] = datetime.datetime.utcnow().date().today().__str__()
     game['winner'] = None
@@ -171,3 +188,59 @@ def signup_game(request, id):
         messages.error(request, "An error has occurred, you have not signed up for the game.")
     return redirect("/game/" + id)
 
+
+def show_treasure(request, id, id_creator):
+    try:
+        user = request.session['user']
+        if user is None:
+            return render(request, LOGIN_TEMPLATE)
+    except:
+        return render(request, LOGIN_TEMPLATE)
+
+    treasure = get_treasure(id, user['google_id'])
+    check_response(request, treasure)
+
+    instance_user = {}
+
+    if treasure['instances'] is not None and len(treasure['instances']):
+        for instance in treasure['instances']:
+            instance['user'] = get_user(instance['user'], user['google_id'])
+            check_response(request, instance['user'])
+            if instance['user']['id'] == user['id']:
+                instance_user = instance
+
+    instances_validated = [instance for instance in treasure['instances'] if instance['validated']]
+    instances_pending = [instance for instance in treasure['instances'] if not instance['validated'] and instance['picture_found'] is not None]
+
+
+
+    show_instances = user['admin'] or user['id'] == id_creator
+
+    print(treasure)
+    dict = {"treasure": treasure, "user": user, "maps": get_map(treasure['coordinates'], [], show_instances),
+            'instances_validated': instances_validated, "instances_pending": instances_pending,
+            'instance_user': instance_user, 'show_instances': show_instances, 'id_creator': id_creator}
+    return render(request, SHOW_TREASURE_TEMPLATE, dict)
+
+
+def validate_treasure(request, id, id_user, id_creator):
+    try:
+        user = request.session['user']
+        if user is None:
+            return render(request, LOGIN_TEMPLATE)
+    except:
+        return render(request, LOGIN_TEMPLATE)
+
+    treasure = get_treasure(id, user['google_id'])
+    check_response(request, treasure)
+
+    instance = [instance for instance in treasure['instances'] if instance.user.id == id_user][0]
+    instance['validated'] = True
+
+    response = update_treasure(id, treasure, user['google_id'])
+    check_response(request, response)
+    if response:
+        messages.success(request, "Game has been reset!")
+    else:
+        messages.error(request, "An error has occurred, your game has not been restarted.")
+    return redirect("/treasure/" + id + '/' + id_creator)

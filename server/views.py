@@ -142,6 +142,55 @@ class GameDetail(generics.RetrieveUpdateDestroyAPIView):
         #   return HttpResponse('Unauthorized', status=401)
         return self.destroy(request, *args, **kwargs)
 
+
+
+
+@method_decorator(decorators, name='dispatch')
+class TreasureList(generics.ListCreateAPIView):
+    queryset = Treasure.objects.all()
+    serializer_class = TreasureSerializer
+
+    def get(self, request, *args, **kwargs):
+        # token = request.headers['Authorization']
+        # result = cache.get(token)
+        # if result is None:
+        #   return HttpResponse('Unauthorized', status=401)
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        # token = request.headers['Authorization']
+        # result = cache.get(token)
+        # if result is None:
+        #   return HttpResponse('Unauthorized', status=401)
+        return self.create(request, *args, **kwargs)
+
+
+@method_decorator(decorators, name='dispatch')
+class TreasureDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Treasure.objects.all()
+    serializer_class = TreasureSerializer
+
+    def get(self, request, *args, **kwargs):
+        # token = request.headers['Authorization']
+        # result = cache.get(token)
+        # if result is None:
+        #   return HttpResponse('Unauthorized', status=401)
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        # token = request.headers['Authorization']
+        # result = cache.get(token)
+        # if result is None:
+        #   return HttpResponse('Unauthorized', status=401)
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        # token = request.headers['Authorization']
+        # result = cache.get(token)
+        # if result is None:
+        #   return HttpResponse('Unauthorized', status=401)
+        return self.destroy(request, *args, **kwargs)
+
 @method_decorator(decorators, name='dispatch')
 class ChatList(generics.ListCreateAPIView):
     queryset = Chat.objects.all()

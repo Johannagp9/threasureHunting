@@ -19,16 +19,17 @@ class User(Document):
 
 class TreasureInstance(EmbeddedDocument):
     picture_found = StringField(max_length=2083)
-    validated = BooleanField()
+    validated = BooleanField(default=False)
+    user = ReferenceField(User, required=True)
 
-class Treasure(EmbeddedDocument):
+class Treasure(Document):
     picture = StringField(max_length=2083)
     coordinates = StringField(max_length=1000)
     clue = StringField(max_length=5000)
     instances = ListField(EmbeddedDocumentField(TreasureInstance))
 
 class GameInstance(EmbeddedDocument):
-    complete = BooleanField()
+    complete = BooleanField(default=False)
     user = ReferenceField(User, required=True)
 
 class Game(Document):
@@ -39,9 +40,9 @@ class Game(Document):
     restart_date = DateField()
     #coordinates = ListField(FloatField)
     instances = ListField(EmbeddedDocumentField(GameInstance))
-    treasures = ListField(EmbeddedDocumentField(Treasure))
+    treasures = ListField(ReferenceField(Treasure))
     creator = ReferenceField(User, required=True, reverse_delete_rule=CASCADE)
-    active = BooleanField()
+    active = BooleanField(default=True)
     winner = ReferenceField(User, required=False, null=True)
 
 class Message(EmbeddedDocument):

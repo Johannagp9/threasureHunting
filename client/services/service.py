@@ -66,6 +66,14 @@ def generate_put(url, datos, token):
     response = requests.put(url, json=datos, headers=headers)
     return response
 
+def generate_delete(url, token):
+    try:
+        headers['Authorization'] = token
+    except KeyError:
+        return HttpResponse('Unauthorized', status=401)
+    response = requests.delete(url, headers=headers)
+    return response
+
 
 def authenticate_user(id_token):
     url = APP_NAME + "/api/auth/"
