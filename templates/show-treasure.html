@@ -112,7 +112,22 @@
         {% else %}
     <div class="card">
             <div class="card-body" style="height: auto;">
-                <p> Añade tu imagen</p>
+                <p> Your treasure</p>
+                <img id="img" src="{% if instance_user is not None %}{{ instance_user.picture_found }}{% endif %}"
+                             style="max-height: 800px; max-width: 800px"/>
+                        <br><br>
+            {% if instance_user is None %}
+            <input type="file" id="treasure_img" name="image" accept="image/png, image/jpeg"
+                                   required><span style="color:#ff0000"></span>
+                        <br><br>
+                <button class="btn btn-outline" style="background-color: #F58310; color: white; border-color: #F58310;" onclick="window.location.href='{% url 'create_instance_treasure' treasure.id id_creator %}'">Save</button>
+                {% endif %}
+            {% if instance_user is not None and instance_user.validated %}
+                <p style="font-weight: bold"> It has been validated!</p>
+                {% elif instance_user is not None and instance_user.picture_found is not None and not instance_user.validated %}
+                <p style="font-weight: bold"> It has not been validated yet.</p>
+                {% endif %}
+
             </div>
     </div>
 
@@ -148,6 +163,20 @@
 			    $('.up').slideUp(300);
 		    }
 	    });
+
+	    function readImage(input) {
+                    if (input.files && input.files[0]) {
+                        let reader = new FileReader();
+                        reader.onload = function (e) {
+                            $('#img').attr('src', e.target.result);
+                        }
+                        reader.readAsDataURL(input.files[0]);
+                    }
+                }
+
+                $("#treasure_img").change(function () {
+                    readImage(this);
+                });
 
     </script>
 {% endblock %}

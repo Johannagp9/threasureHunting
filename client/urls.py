@@ -10,6 +10,7 @@ urlpatterns = [
     path('treasure/<str:id>/<str:id_creator>', views.show_treasure, name='treasure'),
     path('restart_game/<str:id>', views.restart_game, name='restart_game'),
     path('validate_treasure/<str:id>/<str:id_user>/<str:id_creator>', views.validate_treasure, name='validate_treasure'),
+    path('create_instance_treasure/<str:id>/<str:id_creator>', views.create_instance_treasure, name='create_instance_treasure'),
     path('logout/', views.logout, name='logout'),
     path('signup_game/<str:id>', views.signup_game, name='signup_game'),
 ]

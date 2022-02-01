@@ -1,5 +1,6 @@
 import datetime
 import json
+import cloudinary.uploader
 
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -200,7 +201,7 @@ def show_treasure(request, id, id_creator):
     treasure = get_treasure(id, user['google_id'])
     check_response(request, treasure)
 
-    instance_user = {}
+    instance_user = None
 
     if treasure['instances'] is not None and len(treasure['instances']):
         for instance in treasure['instances']:
@@ -240,7 +241,40 @@ def validate_treasure(request, id, id_user, id_creator):
     response = update_treasure(id, treasure, user['google_id'])
     check_response(request, response)
     if response:
-        messages.success(request, "Game has been reset!")
+        messages.success(request, "You have validated the treasure!")
     else:
-        messages.error(request, "An error has occurred, your game has not been restarted.")
+        messages.error(request, "An error has occurred, your validation has not been sent.")
+    return redirect("/treasure/" + id + '/' + id_creator)
+
+
+def create_instance_treasure(request, id, id_creator):
+    try:
+        user = request.session['user']
+        if user is None:
+            return render(request, LOGIN_TEMPLATE)
+    except:
+        return render(request, LOGIN_TEMPLATE)
+
+    treasure = get_treasure(id, user['google_id'])
+    check_response(request, treasure)
+
+    img_url = None
+    if len(request.FILES) > 0:
+        file = request.FILES['image']
+        result = cloudinary.uploader.upload(file, transformation=[
+            {'width': 500, 'crop': 'scale', }])
+        img_url = result["url"]
+
+    print(img_url)
+
+    instance = {"picture_found": img_url, "user": user['id'], "validated": False}
+    treasure['instances'].append(instance)
+
+    response = update_treasure(id, treasure, user['google_id'])
+    print(response.__dict__)
+    check_response(request, response)
+    if response:
+        messages.success(request, "Treasure has been sent!")
+    else:
+        messages.error(request, "An error has occurred, your treasure has not been sent.")
     return redirect("/treasure/" + id + '/' + id_creator)
