@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-
+from datetime import datetime
 # Create your views here.
 ##TEMPLATES
 from django.views.decorators.cache import cache_control
@@ -93,13 +93,50 @@ def show_chats(request):
             receiver = get_user(chat['receiver'], token)
             chat['receiver'] = {"id": receiver['id'], "name": receiver['name']}
         chats = chats
-        users = get_all_users(token)
+    users = get_all_users(token)
+    print(users)
     return render(request, "chat.html",
     {
         "chats": chats,
         "users": users,
         "user": user,
     })
+
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
+def new_message(request):
+    try:
+        user = request.session['user']
+        if user is None:
+            return render(request, LOGIN_TEMPLATE)
+    except:
+        return render(request, LOGIN_TEMPLATE)
+
+    chat = get_chat(request.POST.get('chat'), user['google_id'])
+    chat['messages'].append(
+        {"message": request.POST.get('message'), "date_sent": datetime.today().strftime("%Y-%m-%dT%H:%M:%S"),
+         "sender":  user['id']})
+
+    update_chat(chat['id'], chat, user['google_id'])
+
+    return redirect("show_chats")
+
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
+def new_chat(request):
+    try:
+        user = request.session['user']
+        if user is None:
+            return render(request, LOGIN_TEMPLATE)
+    except:
+        return render(request, LOGIN_TEMPLATE)
+
+    token = user['google_id']
+    chat = {"user1": user['id'], "user2": request.POST.get("receiver"),
+            "messages": [{"message": request.POST.get("message"), "date_sent": datetime.today().strftime(
+                "%Y-%m-%dT%H:%M:%S"), "sender": user['id'], "read": False}]}
+
+    create_chat(chat, token)
+
+    return redirect("show_chats")
 
 
 

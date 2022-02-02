@@ -4,8 +4,6 @@ from route_names import *
 from django.urls import reverse
 
 def get_all_chats(token, params={}):
-    print("TOKEN")
-    print(token)
     url = APP_NAME + reverse(CHATS_SERVER_ROUTE_NAME)
     response = generate_request(url, token=token, params=params)
     if response:

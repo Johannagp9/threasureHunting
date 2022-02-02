@@ -178,7 +178,7 @@ class ChatList(generics.ListCreateAPIView):
         user = self.request.query_params.get('user', None)
         if user:
             print(user)
-            queryset = queryset.filter(Q(sender=user) | Q(receiver=user))
+            queryset = queryset.filter(Q(user1=user) | Q(user2=user))
         filter_chats = ChatFilter(self.request.query_params, queryset=queryset)
         return filter_chats.qs
 

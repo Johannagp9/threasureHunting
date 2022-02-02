@@ -9,4 +9,4 @@ class GameFilter(django_mongoengine_filter.FilterSet):
 class ChatFilter(django_mongoengine_filter.FilterSet):
     class Meta:
         model = Chat
-        fields = ['sender', 'receiver']
+        fields = ['user1', 'user2']
