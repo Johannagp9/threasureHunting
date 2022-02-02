@@ -50,7 +50,6 @@ class UserList(generics.ListCreateAPIView):
 
     def get(self, request, *args, **kwargs):
         token = request.headers['Authorization']
-        print("TOKEN SERVER " + token)
         result = cache.get(token)
         if result is None:
             return HttpResponse('Unauthorized', status=401)
@@ -225,10 +224,8 @@ class ChatList(generics.ListCreateAPIView):
         return self.destroy(request, *args, **kwargs)
 
     def filter_queryset(self, queryset):
-        print(queryset)
         user = self.request.query_params.get('user', None)
         if user:
-            print(user)
             queryset = queryset.filter(Q(user1=user) | Q(user2=user))
         filter_chats = ChatFilter(self.request.query_params, queryset=queryset)
         return filter_chats.qs

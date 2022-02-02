@@ -1,0 +1,15 @@
+h2 {
+    color: #F58310;
+}
+
+.profile-row {
+    background-color: white; 
+    border-color: #000000; 
+    border-radius: 10px; 
+    border-style: solid; 
+    border-width: 1px; 
+    padding:12px; 
+    width:100%; 
+    box-shadow: 5px 10px #F58310;
+
+}

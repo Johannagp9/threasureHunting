@@ -4,40 +4,41 @@
 {% endblock %}
 {% block stylesheet %}
     {{ block.super }}
+    {% load static %}
+    <link href="{% static 'css/chat.css' %}" rel="stylesheet"/>
 {% endblock %}
 {% block content %}
     <h2>Mis Chats</h2>
     <br>
-    <div class="form-row profile-row"
-         style='background-color: #FCF1F1; border-color: #000000; border-radius: 10px; border-style: solid; border-width: 1px; padding:12px; width:100%; box-shadow: 5px 10px #888888;'
-    >
+    <div class="form-row profile-row">
     <br><br>
     <div class="container">
         {% if not chats %}
-            <p>No has iniciado conversación con nadie. Si quieres, puedes iniciar una conversación con el botón de
-                abajo.</p>
+            <p>There isn't any chat created yet. Start now!!</p>
             <br>
         {% else %}
-            <h3>Chats abiertos</h3>
+            <h3>Chats</h3>
             <hr>
             <br>
             <div>
             {% for chat in chats %}
                 <div name="chat_div" style="display:none;" id="{{ chat.id }}">
-                    <h6>Chat con <strong>{% if chat.sender.id == user %} {{ chat.receiver.nombre }} {% else %}
-                        {{ chat.sender.name}} {% endif %}</strong></h6>
+                    <h6>Chat con <strong>{% if chat.user1.id == user %} {{ chat.user2.name }} {% else %}
+                        {{ chat.user1.name}} {% endif %}</strong></h6>
                     <button style="float: right" onclick="showMoreMessages('{{ chat.id }}');">Show more messages</button>
                     <br><br>
                     <div id="{{ chat.id }}" style="background-color:whitesmoke;">
-                        {% for message in messages %}
+                        {% for message in chat.messages %}
                             <div name="message_{{ chat.id }}" style="display: none;
-                                    {% if chat.sender.id == user and message.sender or chat.receiver.id == user and not message.receiver %}
+                                    {% if message.sender == user %}
                                         text-align: right;
                                     {% else %}
                                         color:green;
                                     {% endif %}
                                     ">
-                                {{message }}
+                            <div class="bocadillo-cuadrado">
+                                {{message.content}}
+                            </div>
                             </div>
                         {% endfor %}
                     </div>
@@ -45,8 +46,8 @@
                         <input style="float: right; width: 9%" type="submit" value="Enviar"/>
                         <input style="float: right; width: 91%" type="text" name="message"/>
                         <input type="text" name="destinatario" hidden
-                               value="{% if chat.sender.id == user %} {{ chat.receiver.name }} {% else %}
-                    {{ chat.sender.name }} {% endif %}"/>
+                               value="{% if chat.user1.id == user %} {{ chat.user2.name }} {% else %}
+                    {{ chat.user1.name }} {% endif %}"/>
                         <input type="text" value="{{ chat.id }}" name="chat" hidden/>
                     </form>
 

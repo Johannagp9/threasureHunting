@@ -100,18 +100,17 @@ def show_chats(request):
         chats = []
     else:
         for chat in chats:
-            sender = get_user(chat['sender'], token)
-            chat['sender'] = {"id": sender['id'], "name": sender['name']}
-            receiver = get_user(chat['receiver'], token)
-            chat['receiver'] = {"id": receiver['id'], "name": receiver['name']}
+            user1 = get_user(chat['user1'], token)
+            chat['user1'] = {"id": user1['id'], "name": user1['name']}
+            user2 = get_user(chat['user2'], token)
+            chat['user2'] = {"id": user2['id'], "name": user2['name']}
         chats = chats
     users = get_all_users(token)
-    print(users)
     return render(request, "chat.html",
     {
         "chats": chats,
         "users": users,
-        "user": user,
+        "user": user["id"],
     })
 
 @cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
@@ -124,7 +123,7 @@ def new_message(request):
         return render(request, LOGIN_TEMPLATE)
     chat = get_chat(request.POST.get('chat'), user['google_id'])
     chat['messages'].append(
-        {"message": request.POST.get('message'), "date_sent": datetime.today().strftime("%Y-%m-%dT%H:%M:%S"),
+        {"content": request.POST.get('message'), "date_sent": datetime.today().strftime("%Y-%m-%dT%H:%M:%S"),
          "sender":  user['id']})
 
     update_chat(chat['id'], chat, user['google_id'])
@@ -141,7 +140,7 @@ def new_chat(request):
         return render(request, LOGIN_TEMPLATE)
     token = user['google_id']
     chat = {"user1": user['id'], "user2": request.POST.get("receiver"),
-            "messages": [{"message": request.POST.get("message"), "date_sent": datetime.today().strftime(
+            "messages": [{"content": request.POST.get("message"), "date_sent": datetime.today().strftime(
                 "%Y-%m-%dT%H:%M:%S"), "sender": user['id'], "read": False}]}
 
     create_chat(chat, token)
@@ -157,7 +156,6 @@ def show_game(request, id):
             return render(request, LOGIN_TEMPLATE)
     except:
         return render(request, LOGIN_TEMPLATE)
-    #'61f708570d5c3eb394ba1001'
     game = get_game('61f5a32d75143a90d5ebad66', user['google_id'])
         #get_game(id, user['google_id'])
     check_response(request, game)
@@ -187,7 +185,6 @@ def show_game(request, id):
 
 
     show_treasures = user['admin'] or user['id'] == game['creator']['id']
-    print(treasures)
     dict = {"game": game, "user": user, "maps": get_map(game['location'], treasures, show_treasures),
             'canNotSignup': can_not_signup, "show_treasures": show_treasures, 'treasures': treasures}
     return render(request, SHOW_GAME_TEMPLATE, dict)
@@ -201,7 +198,6 @@ def restart_game(request, id):
             return render(request, LOGIN_TEMPLATE)
     except:
         return render(request, LOGIN_TEMPLATE)
-
     game = get_game(id, user['google_id'])
     if game['instances'] is not None and len(game['instances']):
         for instance in game['instances']:
@@ -371,3 +367,4 @@ def create_instance_treasure(request, id, id_creator):
     else:
         messages.error(request, "An error has occurred, your treasure has not been sent.")
     return redirect("/treasure/" + id + '/' + id_creator)
+

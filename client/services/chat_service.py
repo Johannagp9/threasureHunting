@@ -5,7 +5,7 @@ from django.urls import reverse
 
 def get_all_chats(token, params={}):
     url = APP_NAME + reverse(CHATS_SERVER_ROUTE_NAME)
-    response = generate_request(url, token=token, params=params)
+    response = generate_request(url, token=token, params={})
     if response:
         return response_2_dict(response)
 

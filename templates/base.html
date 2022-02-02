@@ -45,23 +45,24 @@
     <!------------------->
     <!--BARRA SUPERIOR-->
     {% block navigation %}
-        <nav class="navbar navbar-expand-lg" style="height: 65px;">
-            <div class="navbar-collapse collapse w-200 order-1 order-md-0 dual-collapse2">
+        <nav class="navbar navbar-expand-lg justify-content-between" style="height: 65px;">
+            <div class="navbar-collapse  order-1 order-md-0 dual-collapse2">
                 <h5 style="color: white; margin-top: 40px;"><img id="icon" src="https://img.icons8.com/ios-glyphs/30/000000/treasure-map.png"/>
                     Treasurehunt</h5>
             </div>
             <div class="navbar-collapse collapse w-200 order-1 order-md-0 dual-collapse2">
-                <a class="navbar-header" href="#" data-toggle="modal" data-target="#logout_modal"
-                   style="color:whitesmoke;">Log out
-                    <i class="fas fa-power-off" style="color:whitesmoke;"></i></a></li>
-            </div>
+                <a class="btn" href="#" data-toggle="modal" data-target="#logout_modal"
+                   style="color: white; margin-top: 40px;background-color: #F58310;">Log out
+                    <i class="fas fa-power-off" ></i></a></li>
             </div>
         </nav>
         <!----------------------------->
     {% endblock navigation %}
-    <div class="d-flex" id="wrapper" >
-        {% block sidebar %}
-            <div class="bg-light border-right" id="sidebar-wrapper">
+    <div class="row">
+    <div id="mySidebar" class="sidebar">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <div class="d-flex" id="wrapper" >
+            <div class="bg-light" id="sidebar-wrapper">
                 <div class="list-group list-group-flush" >
                     <a href="" 
                         style="color:#F58310; background-color:#15073C" class="list-group-item list-group-item-action"></i>
@@ -84,15 +85,20 @@
                         <i class="far fa-comment" ></i>Chat</a>
                 </div>
             </div>
-        {% endblock %}
+      </div>
+    </div>
         <div id="content" class="col-lg-10">
             <div class="container-fluid">
+                <div class="col-9">
+                    <button class="openbtn" onclick="openNav()">&#9776;</button> 
+                  </div>
                     <br>
                         {% block content %}
                         {% endblock %}
             </div>
         </div>
     </div>
+</div>
 {% endblock %}
 {% block javascripts %}
     <script src="https://code.jquery.com/jquery-3.3.1.js"
@@ -109,6 +115,20 @@
             crossorigin="anonymous"></script>
     <script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
     <script>
+        /* Set the width of the sidebar to 250px and the left margin of the page content to 250px */
+function openNav() {
+  document.getElementById("mySidebar").style.width = "250px";
+  document.getElementById("content").style.marginLeft = "250px";
+}
+
+/* Set the width of the sidebar to 0 and the left margin of the page content to 0 */
+function closeNav() {
+  document.getElementById("mySidebar").style.width = "0";
+  document.getElementById("content").style.marginLeft = "0";
+}
+
+
+
         function signOut() {
             var auth2 = gapi.auth2.getAuthInstance();
             auth2.signOut().then(function () {
