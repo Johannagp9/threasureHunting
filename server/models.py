@@ -46,10 +46,10 @@ class Game(Document):
     winner = ReferenceField(User, required=False, null=True)
 
 class Message(EmbeddedDocument):
-    message = StringField()
+    content = StringField()
     date_sent = DateTimeField()
-    read = BooleanField()
     sender = ReferenceField(User, required=False)
+    read = BooleanField()
 
 class Chat(Document):
     user1 = ReferenceField(User, required=False)
