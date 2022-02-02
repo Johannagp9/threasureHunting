@@ -7,7 +7,8 @@ from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 from client.services.service import authenticate_user
-from client.services.user_service import get_user_by_token, create_user
+from client.services.user_service import get_all_users, get_user, get_user_by_token, create_user
+from client.services.chat_service import *
 
 LOGIN_TEMPLATE = "login.html"
 REGISTER_USER_TEMPLATE = "register.html"
@@ -71,3 +72,34 @@ def logout(request):
 @csrf_exempt
 def index(request):
     return render(request, "base.html")
+
+
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
+def show_chats(request):
+    try:
+        user = request.session['user']
+        if user is None:
+            return render(request, LOGIN_TEMPLATE)
+    except:
+        return render(request, LOGIN_TEMPLATE)
+    token = user['google_id']
+    chats = get_all_chats(token, {"user": user['id']})
+    if chats is None:
+        chats = []
+    else:
+        for chat in chats:
+            sender = get_user(chat['sender'], token)
+            chat['sender'] = {"id": sender['id'], "name": sender['name']}
+            receiver = get_user(chat['receiver'], token)
+            chat['receiver'] = {"id": receiver['id'], "name": receiver['name']}
+        chats = chats
+        users = get_all_users(token)
+    return render(request, "chat.html",
+    {
+        "chats": chats,
+        "users": users,
+        "user": user,
+    })
+
+
+

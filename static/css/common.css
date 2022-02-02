@@ -4,6 +4,9 @@
     font-family: "Marker Felt";
 }
 
-#icon{
-    -webkit-filter: invert(100%);
+.a, .href
+{
+    color:#F58310;
 }
+
+
