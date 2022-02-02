@@ -11,6 +11,9 @@ urlpatterns = [
      
     path('games/', views.GameList.as_view(), name=GAMES_SERVER_ROUTE_NAME),
     path('games/<str:id>/', views.GameDetail.as_view(), name=GAME_DETAIL_SERVER_ROUTE_NAME),
+
+    path('treasures/', views.TreasureList.as_view(), name=TREASURES_SERVER_ROUTE_NAME),
+    path('treasures/<str:id>/', views.TreasureDetail.as_view(), name=TREASURE_DETAIL_SERVER_ROUTE_NAME),
   
     path('chats/', views.ChatList.as_view(), name=CHATS_SERVER_ROUTE_NAME),
     path('chats/<str:id>', views.ChatDetail.as_view(), name=CHAT_DETAIL_SERVER_ROUTE_NAME),

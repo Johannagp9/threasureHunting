@@ -17,7 +17,7 @@
               crossorigin="anonymous">
         {% endblock %}
 </head>
-<body class="body">
+<body class="body" style="background-color: #15073C;">
 {% block body %}
     <!-- MODAL LOGOUT-->
     <div class="modal fade" id="logout_modal" tabindex="-1" role="dialog"
@@ -31,12 +31,12 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    ¿Are you sure to log out?
+                    Are you sure to log out?
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
-                    <button id="btn_close" type="button" class="btn btn-outline"
-                            onclick="signOut();">Close
+                    <button id="btn_close" type="button" class="btn btn-outline" style="background-color: #F58310; color: white; border-color: #F58310;"
+                            onclick="signOut();">Log out
                     </button>
                 </div>
             </div>
@@ -51,8 +51,9 @@
                     Treasurehunt</h5>
             </div>
             <div class="navbar-collapse collapse w-200 order-1 order-md-0 dual-collapse2">
-                <a class="navbar-header" href="#" data-toggle="modal" data-target="#cerrarSesionModalCenter"
-                   style="color:whitesmoke;">Log out<i class="fas fa-power-off" style="color:whitesmoke;"></i></a></li>
+                <a class="navbar-header" href="#" data-toggle="modal" data-target="#logout_modal"
+                   style="color:whitesmoke;">Log out
+                    <i class="fas fa-power-off" style="color:whitesmoke;"></i></a></li>
             </div>
             </div>
         </nav>
@@ -111,7 +112,7 @@
         function signOut() {
             var auth2 = gapi.auth2.getAuthInstance();
             auth2.signOut().then(function () {
-                window.location.href = "";
+                window.location.href = "{% url 'logout' %}";
                 console.log('User signed out.');
             });
         }

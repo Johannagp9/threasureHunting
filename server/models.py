@@ -1,3 +1,5 @@
+from sqlite3.dbapi2 import Date
+
 from mongoengine import *
 import datetime
 
@@ -17,28 +19,31 @@ class User(Document):
 
 class TreasureInstance(EmbeddedDocument):
     picture_found = StringField(max_length=2083)
-    validated = BooleanField()
+    validated = BooleanField(default=False)
+    user = ReferenceField(User, required=True)
 
-class Treasure(EmbeddedDocument):
+class Treasure(Document):
     picture = StringField(max_length=2083)
     coordinates = StringField(max_length=1000)
     clue = StringField(max_length=5000)
     instances = ListField(EmbeddedDocumentField(TreasureInstance))
 
-class GameInstance(Document):
-    complete = BooleanField()
-    user = ReferenceField(User, required=True, reverse_delete_rule=CASCADE)
+class GameInstance(EmbeddedDocument):
+    complete = BooleanField(default=False)
+    user = ReferenceField(User, required=True)
 
 class Game(Document):
     title = StringField(max_length=255)
     description = StringField(max_length=5000)
     picture = StringField(max_length=2083)
-    coordinates = StringField(max_length=1000)
-    instances = ListField(ReferenceField(GameInstance))
-    treasures = ListField(EmbeddedDocumentField(Treasure))
+    location = StringField(max_length=1000)
+    restart_date = DateField()
+    #coordinates = ListField(FloatField)
+    instances = ListField(EmbeddedDocumentField(GameInstance))
+    treasures = ListField(ReferenceField(Treasure))
     creator = ReferenceField(User, required=True, reverse_delete_rule=CASCADE)
-    active = BooleanField()
-    winner =  ReferenceField(User, required=False)
+    active = BooleanField(default=True)
+    winner = ReferenceField(User, required=False, null=True)
 
 class Message(EmbeddedDocument):
     message = StringField()
