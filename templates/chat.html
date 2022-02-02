@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}
+   Chat
+{% endblock %}
+{% block stylesheet %}
+    {{ block.super }}
+{% endblock %}
+{% block content %}
+    <h2>Mis Chats</h2>
+    <br>
+    <div class="form-row profile-row"
+         style='background-color: #FCF1F1; border-color: #000000; border-radius: 10px; border-style: solid; border-width: 1px; padding:12px; width:100%; box-shadow: 5px 10px #888888;'
+    >
+    <br><br>
+    <div class="container">
+        {% if not chats %}
+            <p>No has iniciado conversación con nadie. Si quieres, puedes iniciar una conversación con el botón de
+                abajo.</p>
+            <br>
+        {% else %}
+            <h3>Chats abiertos</h3>
+            <hr>
+            <br>
+            <div>
+            {% for chat in chats %}
+                <div name="chat_div" style="display:none;" id="{{ chat.id }}">
+                    <h6>Chat con <strong>{% if chat.sender.id == user %} {{ chat.receiver.nombre }} {% else %}
+                        {{ chat.sender.name}} {% endif %}</strong></h6>
+                    <button style="float: right" onclick="showMoreMessages('{{ chat.id }}');">Show more messages</button>
+                    <br><br>
+                    <div id="{{ chat.id }}" style="background-color:whitesmoke;">
+                        {% for message in messages %}
+                            <div name="message_{{ chat.id }}" style="display: none;
+                                    {% if chat.sender.id == user and message.sender or chat.receiver.id == user and not message.receiver %}
+                                        text-align: right;
+                                    {% else %}
+                                        color:green;
+                                    {% endif %}
+                                    ">
+                                {{message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <form action="{% url 'new_message' %}" method="post"> {% csrf_token %}
+                        <input style="float: right; width: 9%" type="submit" value="Enviar"/>
+                        <input style="float: right; width: 91%" type="text" name="message"/>
+                        <input type="text" name="destinatario" hidden
+                               value="{% if chat.sender.id == user %} {{ chat.receiver.name }} {% else %}
+                    {{ chat.sender.name }} {% endif %}"/>
+                        <input type="text" value="{{ chat.id }}" name="chat" hidden/>
+                    </form>
+
+                    <br>
+                    <hr>
+                    <br><br>
+                </div>
+
+            {% endfor %}
+            <button onclick="showMoreChats()">Show more chats</button>
+            <br><br>
+        {% endif %}
+        <h3>Create a new chat!</h3>
+        <hr>
+        <form action="{% url 'new_chat' %}" method="post"> {% csrf_token %}
+            <label>Open a new chat with:</label>
+            <select name="receiver">
+                {% for user in users %} 
+                    <option value="{{ user.id }}">{{ user.name }}</option>
+                {% endfor %}
+            </select><br>
+            <labelmessage</label><textarea rows="5" cols="25" name="message" style="width: 100%;"></textarea><br>
+            <input type="submit" value="New chat">
+        </form>
+
+        </div>
+        <br><br><br>
+    </div>
+       
+    </div>
+    <br><br>
+{% endblock %}
+{% block javascripts %}
+    {{ block.super }}
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+
+        const MAX_MESSAGES = 5
+        const MAX_CHATS = 2
+
+        showMoreChats()
+
+        function showMoreMessages(chatId) {
+            const messages = document.getElementsByName('message_' + chatId);
+            let i = messages.length - 1, updated = 0;
+            while (i >= 0 && updated < MAX_MESSAGES) {
+                message = messages[i]
+                if (message.style.display === "none") {
+                message.style.display = "block";
+                    updated++;
+                }
+                i--;
+            }
+        }
+
+        function showMoreChats() {
+            const chats = document.getElementsByName('chat_div');
+            let i = 0, updated = 0;
+            while (i < chats.length && updated < MAX_CHATS) {
+                chat = chats[i]
+                if (chat.style.display === "none") {
+                    chat.style.display = "block";
+                    updated++;
+                    showMoreMessages(chat.id)
+                }
+                i++;
+            }
+        }
+    </script>
+{% endblock %}

@@ -45,10 +45,10 @@
     <!------------------->
     <!--BARRA SUPERIOR-->
     {% block navigation %}
-        <nav class="navbar navbar-expand-lg" style="background-color: #5D2A42; height: 65px;">
+        <nav class="navbar navbar-expand-lg" style="height: 65px;">
             <div class="navbar-collapse collapse w-200 order-1 order-md-0 dual-collapse2">
-                <a class="navbar-header" href="" class="navbar-brand font-weight-bold "><img
-                        src="" style="width: 20%"/></a>
+                <h5 style="color: white; margin-top: 40px;"><img id="icon" src="https://img.icons8.com/ios-glyphs/30/000000/treasure-map.png"/>
+                    Treasurehunt</h5>
             </div>
             <div class="navbar-collapse collapse w-200 order-1 order-md-0 dual-collapse2">
                 <a class="navbar-header" href="#" data-toggle="modal" data-target="#logout_modal"
@@ -59,29 +59,29 @@
         </nav>
         <!----------------------------->
     {% endblock navigation %}
-    <div class="d-flex" id="wrapper">
+    <div class="d-flex" id="wrapper" >
         {% block sidebar %}
             <div class="bg-light border-right" id="sidebar-wrapper">
-                <div class="list-group list-group-flush">
-                    <a href="" style="color: #89beb3;"
-                       class="list-group-item list-group-item-action bg-light"></i>
-                        <i class="fas fa-home" style="margin-right: 10px;"></i>Home</a>
+                <div class="list-group list-group-flush" >
+                    <a href="" 
+                        style="color:#F58310; background-color:#15073C" class="list-group-item list-group-item-action"></i>
+                        <i class="fas fa-home" ></i>Home</a>
 
-                    <a href="" style="color: #89beb3;"
-                       class="list-group-item list-group-item-action bg-light">
-                        <i class="far fa-user" style="margin-right: 10px;"></i>My games</a>
+                    <a href="" 
+                    style="color:#F58310; background-color:#15073C" class="list-group-item list-group-item-action ">
+                        <i class="far fa-map" ></i>My games</a>
 
-                    <a href="" style="color: #89beb3;"
-                       class="list-group-item list-group-item-action bg-light">
-                        <i class="far fa-comment" style="margin-right: 10px;"></i>New game</a>
+                    <a href="" 
+                        style="color:#F58310; background-color:#15073C" class="list-group-item list-group-item-action ">
+                        <i class="far fa-edit" ></i>New game</a>
 
-                    <a href="" style="color: #89beb3;"
-                       class="list-group-item list-group-item-action bg-light">
-                        <i class="far fa-edit" style="margin-right: 10px;"></i>Users</a>
+                    <a href="" 
+                        style="color:#F58310; background-color:#15073C" class="list-group-item list-group-item-action ">
+                        <i class="far fa-user" ></i>Users</a>
 
-                    <a href="" style="color: #89beb3;"
-                       class="list-group-item list-group-item-action bg-light">
-                        <i class="far fa-map" style="margin-right: 10px;"></i>Chat</a>
+                    <a href="{% url 'show_chats' %}"
+                        style="color:#F58310; background-color:#15073C" class="list-group-item list-group-item-action ">
+                        <i class="far fa-comment" ></i>Chat</a>
                 </div>
             </div>
         {% endblock %}

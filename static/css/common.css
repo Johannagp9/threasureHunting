@@ -4,6 +4,12 @@
     font-family: sans-serif;
 }
 
+.a, .href
+{
+    color:#F58310;
+}
+
+
 #icon{
     -webkit-filter: invert(100%);
 }

@@ -27,6 +27,7 @@ def generate_request(url, token, params):
     except KeyError:
         return HttpResponse('Unauthorized', status=401)
     response = requests.get(url, params=params, headers=headers)
+    print(response.__dict__)
     if response.status_code >= 200 and response.status_code < 300:
         return response.json()
     elif response.status_code == 401:

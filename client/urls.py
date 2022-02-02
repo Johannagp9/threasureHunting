@@ -3,6 +3,7 @@ from django.urls import path
 from client import views
 
 urlpatterns = [
+
     path('auth/', views.auth_user, name='auth'),
     path('register/', views.save_user, name='register'),
     path('home/', views.index, name='home'),
@@ -13,4 +14,8 @@ urlpatterns = [
     path('create_instance_treasure/<str:id>/<str:id_creator>', views.create_instance_treasure, name='create_instance_treasure'),
     path('logout/', views.logout, name='logout'),
     path('signup_game/<str:id>', views.signup_game, name='signup_game'),
+    path('chats/', views.show_chats, name='show_chats'),
+    path('chats/new',views.new_chat, name='new_chat'),
+    path('message/new',views.new_message, name='new_message')
+
 ]
