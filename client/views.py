@@ -12,7 +12,7 @@ from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 
-from client.services.game_service import get_game, update_game
+from client.services.game_service import get_game, update_game, get_game_by_treasure
 from client.services.service import authenticate_user, get_coordinates, get_map
 from client.services.treasure_service import get_treasure, delete_treasure, update_treasure
 from client.services.user_service import get_user_by_token, create_user, get_user
@@ -120,7 +120,6 @@ def show_game(request, id):
 
 
     show_treasures = user['admin'] or user['id'] == game['creator']['id']
-    print(treasures)
     dict = {"game": game, "user": user, "maps": get_map(game['location'], treasures, show_treasures),
             'canNotSignup': can_not_signup, "show_treasures": show_treasures, 'treasures': treasures}
     return render(request, SHOW_GAME_TEMPLATE, dict)
@@ -179,10 +178,8 @@ def signup_game(request, id):
     instance['complete'] = False
     instance['user'] = user['id']
     game['instances'].append(instance)
-    print(game)
     response = update_game(id, game, user['google_id'])
     check_response(request, response)
-    print(response.__dict__)
     if response:
         messages.success(request, "You signed up for the game!")
     else:
@@ -217,11 +214,42 @@ def show_treasure(request, id, id_creator):
 
     show_instances = user['admin'] or user['id'] == id_creator
 
-    print(treasure)
     dict = {"treasure": treasure, "user": user, "maps": get_map(treasure['coordinates'], [], show_instances),
             'instances_validated': instances_validated, "instances_pending": instances_pending,
             'instance_user': instance_user, 'show_instances': show_instances, 'id_creator': id_creator}
     return render(request, SHOW_TREASURE_TEMPLATE, dict)
+
+
+def check_winner(request, treasure, id_user, token):
+    games = get_game_by_treasure(treasure, token)
+    check_response(request, games)
+    game = games[0]
+    is_winner = True
+    i=0
+    while is_winner and i < len(game['treasures']):
+        treasure = get_treasure(game['treasures'][i], token)
+        check_response(request, treasure)
+        treasure_instance = [instance for instance in treasure['instances'] if instance['user'] == id_user]
+        is_winner = len(treasure_instance) == 0
+        i += 1
+
+    if is_winner:
+        game['winner'] = id_user
+        i = 0
+        while game['instances'][i]['user'] != id_user and i < len(game['instances']):
+            i += 1
+        game['instances'][i]['complete'] = True
+
+        user = get_user(id_user, token)
+        check_response(request, user)
+
+        response = update_game(game['id'], game, token)
+        check_response(request, response)
+        if response:
+            messages.success(request, "Game is over, the winner is "+user['name']+" !")
+        else:
+            messages.error(request, "An error has occurred.")
+    pass
 
 
 def validate_treasure(request, id, id_user, id_creator):
@@ -235,11 +263,12 @@ def validate_treasure(request, id, id_user, id_creator):
     treasure = get_treasure(id, user['google_id'])
     check_response(request, treasure)
 
-    instance = [instance for instance in treasure['instances'] if instance.user.id == id_user][0]
+    instance = [instance for instance in treasure['instances'] if instance['user'] == id_user][0]
     instance['validated'] = True
 
     response = update_treasure(id, treasure, user['google_id'])
     check_response(request, response)
+    check_winner(request, treasure['id'], id_user, user['google_id'])
     if response:
         messages.success(request, "You have validated the treasure!")
     else:
@@ -265,13 +294,10 @@ def create_instance_treasure(request, id, id_creator):
             {'width': 500, 'crop': 'scale', }])
         img_url = result["url"]
 
-    print(img_url)
-
     instance = {"picture_found": img_url, "user": user['id'], "validated": False}
     treasure['instances'].append(instance)
 
     response = update_treasure(id, treasure, user['google_id'])
-    print(response.__dict__)
     check_response(request, response)
     if response:
         messages.success(request, "Treasure has been sent!")
