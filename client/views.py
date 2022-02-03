@@ -17,12 +17,16 @@ from .forms import CreateGameForm, GameInformationForm
 import folium
 
 
+from django.shortcuts import render
+
+# Create your views here.
+##TEMPLATES
 LOGIN_TEMPLATE = "login.html"
 REGISTER_USER_TEMPLATE = "register.html"
 SHOW_GAME_TEMPLATE = "show-game.html"
 SHOW_TREASURE_TEMPLATE = "show-treasure.html"
 MAP_TEMPLATE = "map.html"
-
+GAMES_TEMPLATE = "games.html"
 json_data = {
     "treasure_information":[
 
@@ -33,6 +37,23 @@ json_data = {
 # Create your views here.
 def login(request):
     return render(request, LOGIN_TEMPLATE)
+
+def display_games(request):
+    try:
+        user = request.session['user']
+        if user is None:
+            return render(request, LOGIN_TEMPLATE)
+    except:
+        return render(request, LOGIN_TEMPLATE)
+    token = user['google_id']
+    games_list = get_all_games(token)
+    for game in games_list:
+        if game["winner"]:
+            game["winner_name"] = get_user(game['winner'], token)["name"]
+
+    return render(request, GAMES_TEMPLATE, {
+                  "games_list" : games_list
+    })
 
 @csrf_exempt
 def auth_user(request):
@@ -46,7 +67,7 @@ def auth_user(request):
             return render(request, REGISTER_USER_TEMPLATE)
         else:
             request.session['user'] = user[0]
-            return redirect("/home")
+            return redirect("/games")
     else:
         return render(request, LOGIN_TEMPLATE)
 
@@ -71,7 +92,7 @@ def save_user(request):
         messages.success(request, "You just signed up for the treasure hunt!")
         users = get_user_by_token(idinfo['sub'])
         request.session['user'] = users[0]
-        return redirect("/home")
+        return redirect("/games")
     else:
         messages.error(request, "An error has occurred.")
         return render(request, REGISTER_USER_TEMPLATE)
@@ -108,9 +129,10 @@ def show_chats(request):
             chat['user1'] = {"id": user1['id'], "name": user1['name']}
             user2 = get_user(chat['user2'], token)
             chat['user2'] = {"id": user2['id'], "name": user2['name']}
+            chat['without_read'] = len([ message for message in chat['messages'] if message['sender']!=user["id"] and  message["read"]==False])
         chats = chats
     users = get_all_users(token)
-    return render(request, "chat.html",
+    return render(request, "chats.html",
     {
         "chats": chats,
         "users": users,
@@ -128,11 +150,11 @@ def new_message(request):
     chat = get_chat(request.POST.get('chat'), user['google_id'])
     chat['messages'].append(
         {"content": request.POST.get('message'), "date_sent": datetime.today().strftime("%Y-%m-%dT%H:%M:%S"),
-         "sender":  user['id']})
+         "sender":  user['id'], "read":False})
 
     update_chat(chat['id'], chat, user['google_id'])
 
-    return redirect("show_chats")
+    return redirect("/chat/show/" + chat['id'])
 
 @cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def new_chat(request):
@@ -143,6 +165,7 @@ def new_chat(request):
     except:
         return render(request, LOGIN_TEMPLATE)
     token = user['google_id']
+    print("Sending message")
     chat = {"user1": user['id'], "user2": request.POST.get("receiver"),
             "messages": [{"content": request.POST.get("message"), "date_sent": datetime.today().strftime(
                 "%Y-%m-%dT%H:%M:%S"), "sender": user['id'], "read": False}]}
@@ -161,7 +184,7 @@ def show_game(request, id):
     except:
         return render(request, LOGIN_TEMPLATE)
     game = get_game('61f5a32d75143a90d5ebad66', user['google_id'])
-        #get_game(id, user['google_id'])
+
     check_response(request, game)
     game['creator'] = get_user(game['creator'], user['google_id'])
     check_response(request, game['creator'])
@@ -372,6 +395,33 @@ def create_instance_treasure(request, id, id_creator):
         messages.error(request, "An error has occurred, your treasure has not been sent.")
     return redirect("/treasure/" + id + '/' + id_creator)
 
+def show_chat(request, id):
+    try:
+        user = request.session['user']
+        if user is None:
+            return render(request, LOGIN_TEMPLATE)
+    except:
+        return render(request, LOGIN_TEMPLATE)
+    token = user['google_id']
+    chat = get_chat(id,token)
+    chat_messages = chat['messages']
+    for message in chat['messages']:
+        if message['sender']!= user['id'] and not message['read']:
+            message['read']=True
+    chat['messages'] = chat_messages
+    response = update_chat(chat['id'],chat,token)
+    if not response:
+        messages.error(request, "An error has occurred, try later")
+        return redirect('show_chats')
+    else:
+        user1 = get_user(chat['user1'], token)
+        chat['user1'] = {"id": user1['id'], "name": user1['name']}
+        user2 = get_user(chat['user2'], token)
+        chat['user2'] = {"id": user2['id'], "name": user2['name']}
+        return render(request,"show-chat.html",{
+        "chat": chat,
+        "user": user["id"],
+    } )
 
 def store_image_treasure(file):
     if len(file) > 0:
@@ -525,4 +575,5 @@ def maps(request):
     if (len(coordinates) == 2):
         maps = get_map((coordinates['lat'], coordinates['long']))
         return render(request, MAP_TEMPLATE, {"maps":maps})
+
 

@@ -21,21 +21,6 @@ body {
     border-color: #F58310;
 }
 
-.bocadillo-cuadrado {
-    position: relative;
-    background: white;
-    box-shadow: 1px 12px 33px rgba(0, 0, 0, 0.5);
-}
-.bocadillo-cuadrado:before {
-    border: 25px solid white;
-    content: '';
-    border-left-color: transparent;
-    border-bottom-color: transparent;
-    border-right-color: transparent;
-    position: absolute;
-    bottom: -48px;
-    left: calc(50% - 25px)
-}
 
 /* The sidebar menu */
 .sidebar {
@@ -101,6 +86,7 @@ body {
     color: white;
     text-align: center;
   }
+  
 
 
   

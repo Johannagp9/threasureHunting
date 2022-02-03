@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block stylesheet %}
+    {% load static %}
+    {{ block.super }}
+    <link href="{% static 'css/chat.css' %}" rel="stylesheet"/>
+{% endblock %}
+{% block content %}
+    <br><br>
+    <div class="container">
+        <div class="profile-row">
+        <div name="chat_div" style="display:none;" id="{{ chat.id }}"></div>
+            <h3>Chat with <strong>{% if chat.user1.id == user %} {{ chat.user2.name }} {% else %}
+                        {{ chat.user1.name }} {% endif %}</strong></h6>
+                    <br><br>
+                    <div id="{{ chat.id }}" style="background-color:whitesmoke;">
+                        <ul class="list-group list-group-chat" id="list-sentences">
+                        {% for message in chat.messages %} 
+                            <li class="chat-message" name="mensaje_{{ chat.id }}">
+                                {% if message.sender == user %}
+                                <div class="container">
+                                    <img src="https://res.cloudinary.com/dgfxcy2dy/image/upload/v1643849357/278_hklcbu.jpg" alt="Avatar" style="width:100%;">
+                                    <p class="text-right">{{message.content}}</p>
+                                    <span class="time-right">{{message.date_sent}}</span>
+                                  </div>     
+                                {% else %}
+                                <div class="container darker">
+                                    <img src="https://res.cloudinary.com/dgfxcy2dy/image/upload/v1643849393/49489_pabhqx.jpg" alt="Avatar" class="right" style="width:100%;">
+                                    <p>{{message.content}}</p>
+                                    <span class="time-left">{{message.date_sent}}</span>
+                                  </div>
+                                {% endif %}  
+                        </li>
+         
+                        {% endfor %}
+                        </ul>
+                    </div> 
+                    <br><br>
+                    <hr>
+                    <form action="{% url 'new_message' %}" method="post"> {% csrf_token %}
+                        <input class="btn btn-chat" style="float: right; width: 9%" type="submit" value="Send"/>
+                        <input style="float: right; width: 91%" type="text" name="message"/>
+                        <input type="text" name="receiver" hidden
+                               value="{% if chat.user.id == user %} {{ chat.user2.id }} {% else %}
+                    {{ chat.user1.id }} {% endif %}"/>
+                        <input type="text" value="{{ chat.id }}" name="chat" hidden/>
+                    </form>
+                    <br>
+                    <hr>
+                    <br><br>
+                </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ block.super }}
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
+    {% endblock %}
