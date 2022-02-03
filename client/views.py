@@ -189,7 +189,7 @@ def show_game(request, id):
 
 
     show_treasures = user['admin'] or user['id'] == game['creator']['id']
-    dict = {"game": game, "user": user, "maps": get_map(game['location'], treasures, show_treasures),
+    dict = {"game": game, "user": user, "maps": services.get_map(game['location'], treasures, show_treasures),
             'canNotSignup': can_not_signup, "show_treasures": show_treasures, 'treasures': treasures}
     return render(request, SHOW_GAME_TEMPLATE, dict)
 
@@ -281,7 +281,7 @@ def show_treasure(request, id, id_creator):
 
     show_instances = user['admin'] or user['id'] == id_creator
 
-    dict = {"treasure": treasure, "user": user, "maps": get_map(treasure['coordinates'], [], show_instances),
+    dict = {"treasure": treasure, "user": user, "maps": services.get_map(treasure['coordinates'], [], show_instances),
             'instances_validated': instances_validated, "instances_pending": instances_pending,
             'instance_user': instance_user, 'show_instances': show_instances, 'id_creator': id_creator}
     return render(request, SHOW_TREASURE_TEMPLATE, dict)
