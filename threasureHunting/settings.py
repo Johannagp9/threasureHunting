@@ -14,7 +14,7 @@ from pathlib import Path
 import cloudinary
 import django_heroku
 
-GOOGLE_CLIENT_ID = '1029113520429-398ll2mvjqd7uvqnalhoutt9ta6m9igt.apps.googleusercontent.com'
+GOOGLE_CLIENT_ID = '1029113520429-53um86d9e1mti6ks9tp1rcidfjif987a.apps.googleusercontent.com'
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
