@@ -13,3 +13,4 @@ django-filter==2.4.0
 folium~=0.12.1.post1
 mongoengine~=0.21.0
 Pillow==9.0.0
+django-heroku==0.3.1
