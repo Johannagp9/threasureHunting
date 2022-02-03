@@ -1,0 +1,141 @@
+
+
+button{
+    background-color: #F58310;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 48px !important;
+    font-family: 'Saira Condensed';
+    cursor: pointer;
+    margin: 16px auto !important;
+    align-items: center;
+    box-shadow: 0px 3px 6px #00000029;
+}
+
+.add-another{
+    background: #FFFFFF;
+    color: black;
+}
+
+.add-another:hover,
+.add-another:active{
+    background-color: #f3f3f3;
+}
+
+.button-div{
+    display: flex;
+    align-items: center;
+}
+
+button:hover,
+button:active{
+    background-color: #ff952b;
+}
+
+.form-div{
+    margin: 16px auto !important;
+    width: 100%;
+    max-width: 900px;
+    padding: 16px !important;
+    border-radius: 12px;
+    background-color: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.26);
+}
+
+.edit-div{
+    margin: 16px !important;
+    width: 100%;
+    max-width: 448px;
+    border-radius: 12px;
+    background-color: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.26);
+    display: inline-block;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+
+}
+
+
+
+
+.form-control h1{
+    text-align: center;
+    color: #F58310;
+    margin: 16px auto !important;
+}
+
+.form-control input{
+    display: block;
+    width: 400px;
+    height: 48px;
+    margin: 16px auto !important;
+    box-shadow: 0px 3px 6px #00000029;
+    border-radius: 10px;
+    border: none;
+    font-family: 'Marker Felt';
+}
+
+.form-control label{
+    display: block;
+    margin: 16px auto;
+    color: black;
+    text-align: center;
+}
+
+.form-control textarea{
+    width: 400px;
+    height: 160px;
+    display: block;
+    margin: 16px auto !important;
+    box-shadow: 0px 3px 6px #00000029;
+    border-radius: 10px;
+    border: none;
+    font-family: 'Saira Condensed';
+}
+
+.form-map{
+    width: 400px;
+    margin: 16px auto !important;
+}
+
+.form-map p{
+    display: block;
+    margin: 16px auto !important;
+    color: rgb(0, 0, 0);
+    text-align: center;
+}
+.form-control p{
+    display: block;
+    margin: 16px auto !important;
+    color: rgb(0, 0, 0);
+    text-align: center;
+}
+
+.description{
+    width: 400px;
+    height: 160px;
+    display: block;
+    margin: 16px auto !important;
+    box-shadow: 0px 3px 6px #00000029;
+    border-radius: 10px;
+    border: none;
+    font-family: 'Saira Condensed';
+}
+
+.edit-div img{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 90%;
+    height: 90%;
+    border-radius: 10px;
+    align-items: center;
+}
+
+.div-map{
+    width: 90%;
+    height: 90%;
+    margin: 16px auto !important;
+}
