@@ -7,7 +7,7 @@ from datetime import datetime
 from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
-from client import services
+from client.services import service
 from client.services.user_service import *
 from client.services.chat_service import *
 from client.services.game_service import *
@@ -152,7 +152,7 @@ def new_chat(request):
     return redirect("show_chats")
 
 
-
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def show_game(request, id):
     try:
         user = request.session['user']
@@ -189,7 +189,7 @@ def show_game(request, id):
 
 
     show_treasures = user['admin'] or user['id'] == game['creator']['id']
-    dict = {"game": game, "user": user, "maps": services.get_map(game['location'], treasures, show_treasures),
+    dict = {"game": game, "user": user, "maps": service.get_map(game['location'], treasures, show_treasures),
             'canNotSignup': can_not_signup, "show_treasures": show_treasures, 'treasures': treasures}
     return render(request, SHOW_GAME_TEMPLATE, dict)
 
@@ -281,7 +281,7 @@ def show_treasure(request, id, id_creator):
 
     show_instances = user['admin'] or user['id'] == id_creator
 
-    dict = {"treasure": treasure, "user": user, "maps": services.get_map(treasure['coordinates'], [], show_instances),
+    dict = {"treasure": treasure, "user": user, "maps": service.get_map(treasure['coordinates'], [], show_instances),
             'instances_validated': instances_validated, "instances_pending": instances_pending,
             'instance_user': instance_user, 'show_instances': show_instances, 'id_creator': id_creator}
     return render(request, SHOW_TREASURE_TEMPLATE, dict)
@@ -318,7 +318,7 @@ def check_winner(request, treasure, id_user, token):
             messages.error(request, "An error has occurred.")
     pass
 
-
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def validate_treasure(request, id, id_user, id_creator):
     try:
         user = request.session['user']
@@ -342,7 +342,7 @@ def validate_treasure(request, id, id_user, id_creator):
         messages.error(request, "An error has occurred, your validation has not been sent.")
     return redirect("/treasure/" + id + '/' + id_creator)
 
-
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def create_instance_treasure(request, id, id_creator):
     try:
         user = request.session['user']
