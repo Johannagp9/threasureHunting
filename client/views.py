@@ -376,7 +376,7 @@ def create_instance_treasure(request, id, id_creator):
 
 
 def show_chat(request, id):
-   try:
+    try:
         user = request.session['user']
         if user is None:
             return render(request, LOGIN_TEMPLATE)
@@ -440,6 +440,12 @@ def edit_game(request):
         })
 
 def create_game(request):
+    try:
+        user = request.session['user']
+        if user is None:
+            return render(request, LOGIN_TEMPLATE)
+    except:
+        return render(request, LOGIN_TEMPLATE)
     if request.method == "POST":
         form = CreateGameForm(request.POST, request.FILES)
         if form.is_valid():
