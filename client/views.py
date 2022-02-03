@@ -374,7 +374,6 @@ def create_instance_treasure(request, id, id_creator):
         messages.error(request, "An error has occurred, your treasure has not been sent.")
     return redirect("/treasure/" + id + '/' + id_creator)
 
-
 def show_chat(request, id):
     try:
         user = request.session['user']

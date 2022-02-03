@@ -18,7 +18,7 @@ urlpatterns = [
     path('chats/new',views.new_chat, name='new_chat'),
     path('message/new',views.new_message, name='new_message'),
     path('chat/show/<str:id>', views.show_chat,name='show_chat' ),
-    path("create", views.create_game),
+    path("create", views.create_game, name="new_game"),
     path("create/information", views.game_information),
     path("edit", views.edit_game),
     path('maps/', views.maps, name='maps'),
