@@ -39,9 +39,20 @@ def login(request):
     return render(request, LOGIN_TEMPLATE)
 
 def display_games(request):
-    gamesList = [1, 2, 3, 4, 5, 6, 7]
+    try:
+        user = request.session['user']
+        if user is None:
+            return render(request, LOGIN_TEMPLATE)
+    except:
+        return render(request, LOGIN_TEMPLATE)
+    token = user['google_id']
+    games_list = get_all_games(token)
+    for game in games_list:
+        if game["winner"]:
+            game["winner_name"] = get_user(game['winner'], token)["name"]
+
     return render(request, GAMES_TEMPLATE, {
-                  "games_list" : gamesList
+                  "games_list" : games_list
     })
 
 @csrf_exempt
@@ -56,7 +67,7 @@ def auth_user(request):
             return render(request, REGISTER_USER_TEMPLATE)
         else:
             request.session['user'] = user[0]
-            return redirect("/home")
+            return redirect("/games")
     else:
         return render(request, LOGIN_TEMPLATE)
 
@@ -81,7 +92,7 @@ def save_user(request):
         messages.success(request, "You just signed up for the treasure hunt!")
         users = get_user_by_token(idinfo['sub'])
         request.session['user'] = users[0]
-        return redirect("/home")
+        return redirect("/games")
     else:
         messages.error(request, "An error has occurred.")
         return render(request, REGISTER_USER_TEMPLATE)

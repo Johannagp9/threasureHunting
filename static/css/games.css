@@ -2,6 +2,7 @@
 
 body {
   font-family: 'Teko', sans-serif !important;
+  background-color: white !important;
 }
 
 .game-card {
@@ -55,6 +56,17 @@ body {
   font-weight: 700;
   margin-bottom: 8px;
   text-align: center;
+  color: black;
+  text-decoration: none;
+}
+
+.game-card-title:hover {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-align: center;
+  color: black;
+  text-decoration: none;
 }
 
 .game-card-description {

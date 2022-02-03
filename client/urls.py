@@ -4,7 +4,7 @@ from . import views
 from client import views
 
 urlpatterns = [
-    path("games", views.display_games, name="display_games"),
+    path("games/", views.display_games, name="display_games"),
     path('auth/', views.auth_user, name='auth'),
     path('register/', views.save_user, name='register'),
     path('home/', views.index, name='home'),
