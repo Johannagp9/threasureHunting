@@ -30,26 +30,46 @@
 
         <div class="card">
                 <div class="card-body" style="width: auto;">
+                    <div class="row">
+                        <div class="col-lg-6">
                 <h3 class="text-dark"
                             style="padding-left: 15px;padding-right: 15px;">{{ treasure.clue }}</h3>
-                        <img class="img-fluid" style="width: 50%" src="{{ treasure.picture }}" >
-                </div>
-                </div>
-
-        <br/>
-{% if show_instances %}
-        <div class="card">
-            <div class="card-body" style="height: auto;">
-                <div class="form-map">
+                        <img class="img-fluid" style="width: 70%" src="{{ treasure.picture }}" >
+                        </div>
+                        <div class="col-lg-6">
+                            {% if show_instances %}
+                                <div class="form-map" style="width: auto">
                 <p>{{ treasure.coordinates }}</p>
                 <div id="mapId">
                 {{maps|safe}}
                 </div>
                 </div>
+                            {% else %}
+                                <h3> Your treasure</h3>
+                                <form action={% if instance_user is None %}{% url 'create_instance_treasure' treasure.id id_creator %}{% endif %} method="post" enctype="multipart/form-data"> {% csrf_token %}
+                <img id="img" src="{% if instance_user is not None %}{{ instance_user.picture_found }}{% endif %}"
+                             style="max-height: 400px; max-width: 400px"/>
+                        <br><br>
+            {% if instance_user is None %}
+            <input type="file" id="treasure_img" name="image" accept="image/png, image/jpeg"
+                                   required><span style="color:#ff0000"></span>
+                        <br><br>
+                <button class="btn btn-outline" type="submit" style="background-color: #F58310; color: white; border-color: #F58310;">Save</button>
+                {% endif %}
+                                </form>
+            {% if instance_user is not None and instance_user.validated %}
+                <p style="font-weight: bold"> It has been validated!</p>
+                {% elif instance_user is not None and instance_user.picture_found is not None and not instance_user.validated %}
+                <p style="font-weight: bold"> It has not been validated yet.</p>
+                {% endif %}
+                            {% endif %}
+                        </div>
+                </div>
+                </div>
+                </div>
 
-            </div>
-        </div>
         <br/>
+{% if show_instances %}
         <div class="card">
             <div class="card-header">
                 <i class="fa fa-check-circle"></i> Validated treasures
@@ -97,10 +117,11 @@
 
     <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
       <div class="card-body">
-      <img src="{{ pending.picture_found }}">
-          <label>Validate</label>
-          <input type="checkbox">
-          <button class="btn btn-outline" style="background-color: #F58310; color: white; border-color: #F58310;" onclick="window.location.href='{% url 'validate_treasure' treasure.id pending.user.id id_creator %}'">Save</button>
+      <img src="{{ pending.picture_found }}" align="center">
+          <hr/>
+          <label for="validate_check" align="center">Validate it!</label>
+          <input id="validate_check" type="checkbox" align="center">
+          <button class="btn btn-outline" align="right" style="background-color: #F58310; color: white; border-color: #F58310;" onclick="window.location.href='{% url 'validate_treasure' treasure.id pending.user.id id_creator %}'">Save</button>
       </div>
     </div>
   </div>
@@ -109,27 +130,6 @@
 </div>
             </div>
         </div>
-        {% else %}
-    <div class="card">
-            <div class="card-body" style="height: auto;">
-                <p> Your treasure</p>
-                <img id="img" src="{% if instance_user is not None %}{{ instance_user.picture_found }}{% endif %}"
-                             style="max-height: 800px; max-width: 800px"/>
-                        <br><br>
-            {% if instance_user is None %}
-            <input type="file" id="treasure_img" name="image" accept="image/png, image/jpeg"
-                                   required><span style="color:#ff0000"></span>
-                        <br><br>
-                <button class="btn btn-outline" style="background-color: #F58310; color: white; border-color: #F58310;" onclick="window.location.href='{% url 'create_instance_treasure' treasure.id id_creator %}'">Save</button>
-                {% endif %}
-            {% if instance_user is not None and instance_user.validated %}
-                <p style="font-weight: bold"> It has been validated!</p>
-                {% elif instance_user is not None and instance_user.picture_found is not None and not instance_user.validated %}
-                <p style="font-weight: bold"> It has not been validated yet.</p>
-                {% endif %}
-
-            </div>
-    </div>
 
 
     {% endif %}
@@ -146,37 +146,22 @@
     <script src='{% static "js/jquery.min.js" %}'></script>
     <script src='{% static "bootstrap/js/bootstrap.min.js" %}'></script>
     <script>
-        $(function () {
-            $('[data-toggle="tooltip"]').tooltip()
-        })
 
-	    $('.up').click(function(){
-		    $('body, html').animate({
-			    scrollTop: '0px'
-		    }, 300);
-	    });
-
-	    $(window).scroll(function(){
-		    if( $(this).scrollTop() > 0 ){
-			    $('.up').slideDown(300);
-		    } else {
-			    $('.up').slideUp(300);
-		    }
-	    });
-
-	    function readImage(input) {
-                    if (input.files && input.files[0]) {
-                        let reader = new FileReader();
-                        reader.onload = function (e) {
-                            $('#img').attr('src', e.target.result);
-                        }
-                        reader.readAsDataURL(input.files[0]);
-                    }
+    $(document).ready(function () {
+        function readImage(input) {
+            if (input.files && input.files[0]) {
+                let reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#img').attr('src', e.target.result);
                 }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
 
-                $("#treasure_img").change(function () {
-                    readImage(this);
-                });
+        $("#treasure_img").change(function () {
+            readImage(this);
+        });
+    });
 
     </script>
 {% endblock %}

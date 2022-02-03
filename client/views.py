@@ -1,29 +1,33 @@
 import datetime
-import json
 import cloudinary.uploader
 
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from datetime import datetime
-# Create your views here.
-##TEMPLATES
 
 from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
-
-from client.services.service import *
+from client import services
 from client.services.user_service import *
 from client.services.chat_service import *
 from client.services.game_service import *
 from client.services.treasure_service import *
-
+from django.http import HttpResponseRedirect
+from .forms import CreateGameForm, GameInformationForm
+import folium
 
 
 LOGIN_TEMPLATE = "login.html"
 REGISTER_USER_TEMPLATE = "register.html"
 SHOW_GAME_TEMPLATE = "show-game.html"
 SHOW_TREASURE_TEMPLATE = "show-treasure.html"
+MAP_TEMPLATE = "map.html"
+
+json_data = {
+    "treasure_information":[
+
+    ]
+}
 
 
 # Create your views here.
@@ -243,10 +247,8 @@ def signup_game(request, id):
     instance['complete'] = False
     instance['user'] = user['id']
     game['instances'].append(instance)
-    print(game)
     response = update_game(id, game, user['google_id'])
     check_response(request, response)
-    print(response.__dict__)
     if response:
         messages.success(request, "You signed up for the game!")
     else:
@@ -287,6 +289,38 @@ def show_treasure(request, id, id_creator):
     return render(request, SHOW_TREASURE_TEMPLATE, dict)
 
 
+def check_winner(request, treasure, id_user, token):
+    games = get_game_by_treasure(treasure, token)
+    check_response(request, games)
+    game = games[0]
+    is_winner = True
+    i=0
+    while is_winner and i < len(game['treasures']):
+        treasure = get_treasure(game['treasures'][i], token)
+        check_response(request, treasure)
+        treasure_instance = [instance for instance in treasure['instances'] if instance['user'] == id_user]
+        is_winner = len(treasure_instance) == 0
+        i += 1
+
+    if is_winner:
+        game['winner'] = id_user
+        i = 0
+        while game['instances'][i]['user'] != id_user and i < len(game['instances']):
+            i += 1
+        game['instances'][i]['complete'] = True
+
+        user = get_user(id_user, token)
+        check_response(request, user)
+
+        response = update_game(game['id'], game, token)
+        check_response(request, response)
+        if response:
+            messages.success(request, "Game is over, the winner is "+user['name']+" !")
+        else:
+            messages.error(request, "An error has occurred.")
+    pass
+
+
 def validate_treasure(request, id, id_user, id_creator):
     try:
         user = request.session['user']
@@ -298,11 +332,12 @@ def validate_treasure(request, id, id_user, id_creator):
     treasure = get_treasure(id, user['google_id'])
     check_response(request, treasure)
 
-    instance = [instance for instance in treasure['instances'] if instance.user.id == id_user][0]
+    instance = [instance for instance in treasure['instances'] if instance['user'] == id_user][0]
     instance['validated'] = True
 
     response = update_treasure(id, treasure, user['google_id'])
     check_response(request, response)
+    check_winner(request, treasure['id'], id_user, user['google_id'])
     if response:
         messages.success(request, "You have validated the treasure!")
     else:
@@ -328,12 +363,10 @@ def create_instance_treasure(request, id, id_creator):
             {'width': 500, 'crop': 'scale', }])
         img_url = result["url"]
 
-
     instance = {"picture_found": img_url, "user": user['id'], "validated": False}
     treasure['instances'].append(instance)
 
     response = update_treasure(id, treasure, user['google_id'])
-
     check_response(request, response)
     if response:
         messages.success(request, "Treasure has been sent!")
@@ -341,8 +374,9 @@ def create_instance_treasure(request, id, id_creator):
         messages.error(request, "An error has occurred, your treasure has not been sent.")
     return redirect("/treasure/" + id + '/' + id_creator)
 
+
 def show_chat(request, id):
-    try:
+   try:
         user = request.session['user']
         if user is None:
             return render(request, LOGIN_TEMPLATE)
@@ -369,6 +403,151 @@ def show_chat(request, id):
         "user": user["id"],
     } )
 
+def store_image_treasure(file):
+    if len(file) > 0:
+        result = cloudinary.uploader.upload(file, transformation=[
+            {'width': 500, 'crop': 'scale', }])
+        image_url = result["url"]
+        return image_url
 
+def edit_game(request):
+    try:
+        user = request.session['user']
+        if user is None:
+            return render(request, LOGIN_TEMPLATE)
+    except:
+        return render(request, LOGIN_TEMPLATE)
+
+    maps = get_map([54.372158,18.638306])
+    if request.method == "POST":
+        form = CreateGameForm(request.POST, request.FILES)
+        if form.is_valid():
+            data = form.cleaned_data
+            data['picture'] = store_image_treasure(request.FILES["picture"])
+            print(data)
+            return HttpResponseRedirect("/create/information")
+    else:
+        form = CreateGameForm()
+
+    return render(request, "edit_game.html",{
+         "form": form,
+         "test": range(5),  #number of created Treasures in game
+         "title": "Some name",   #Name of the game that user typed
+         "treasure_description": "This is example of treasure description to make area look like normal area and some more informations here nothjing important", #it would be good to use here list to refer in templates in each iteration to different text
+         "treasure_image": "https://www.polska.travel/images/pl-PL/glowne-miasta/gdansk/gdansk_motlawa_1170.jpg",
+         "clue_description": "This is example of treasure description to make area look like normal area and some more informations here nothjing important",
+         "map": maps
+        })
+
+def create_game(request):
+    if request.method == "POST":
+        form = CreateGameForm(request.POST, request.FILES)
+        if form.is_valid():
+            data = form.cleaned_data
+            data['picture'] = store_image_treasure(request.FILES["picture"])
+            data['creator'] = user['id']
+            data['coordinates'] = request.POST.get('coordinates')
+
+            print(data)
+            return HttpResponseRedirect("/create/information")
+    else:
+        form = CreateGameForm()
+
+    return render(request, "create_game.html",{
+         "form": form,
+        })
+
+
+def game_information(request):
+    try:
+        user = request.session['user']
+        if user is None:
+            return render(request, LOGIN_TEMPLATE)
+    except:
+        return render(request, LOGIN_TEMPLATE)
+    print('request')
+    print(request.method)
+    if request.method == "GET":
+        print(request.GET)
+        form_information = GameInformationForm()
+
+    # print(response_2_dict(request))
+
+    # if len(json_data["treasure_information"]) > 0:
+    #    maps = get_map([json_data["treasure_information"][0]["lat"],json_data["treasure_information"][0]["long"]])
+    # else:
+    #    maps = get_map([36.72016, -4.42034])
+
+    # for i in range (0,len(json_data["treasure_information"])):
+    #  pass
+    # maps = get_map([36.72016, -4.42034])
+    # print("PRZED form_information->>>>>",request.POST.get('input_localization'))
+    elif request.method == "POST":
+        # print("form_information->>>>>",request.POST.get('input_localization'))
+        # coordinates = _get_coordinates(request.POST['input_localization'])
+        # print("game_information",coordinates)
+        print(type(request))
+        print(request.POST)
+        print(type(request.POST))
+        form_information = GameInformationForm()
+
+        form_information = GameInformationForm(request.POST, request.FILES)
+        if form_information.is_valid():
+            # print("VALIDform_information->>>>>",request.POST.get('input_localization'))
+            # TODO change with actual_location
+            coordinates = get_coordinates(request.POST.get('actual_location'))
+            # coordinates = _get_coordinates(request.POST['location'])
+            link = store_image_treasure(request.FILES["user_image_2"])
+            json_object = {
+                "description_treasure": form_information.cleaned_data["description_information"],
+                "treasure_image": link,
+                "description_clue": form_information.cleaned_data["description_information_clue"],
+                "lat": coordinates[0],
+                "long": coordinates[1],
+            }
+            json_data["treasure_information"].append(json_object)
+            print(json_data)
+            if 'another' in request.POST:
+                return HttpResponseRedirect("/create/information")
+            if 'create' in request.POST:
+                return HttpResponseRedirect("/create")
+
+    else:
+        form_information = GameInformationForm()
+
+    print(form_information)
+
+    return render(request, "game_information.html", {
+        "form_information": form_information,
+    })
+
+
+def get_map(coordinates):
+    maps = folium.Map(location=coordinates, zoom_start=10)
+    print("jestem get_map ->",coordinates)
+    counter = len(json_data["treasure_information"])+1
+    for i in range (0,counter):
+        if i == 0:
+            folium.Marker(
+                location=coordinates
+            ).add_to(maps)
+            print("go here")
+        else:
+            folium.Marker(
+                location=[json_data["treasure_information"][i-1]["lat"], json_data["treasure_information"][i-1]["long"]]
+            ).add_to(maps)
+            print("else")
+
+    maps = maps._repr_html_()
+    return maps
+
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
+@csrf_exempt
+def maps(request):
+    print("CO TO JEST ->",request)
+    coordinates = get_coordinates(request.POST.get('location'))
+    if (len(coordinates) == 2):
+        maps = get_map((coordinates['lat'], coordinates['long']))
+        return render(request, MAP_TEMPLATE, {"maps":maps})
 
 

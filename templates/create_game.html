@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block stylesheet %}
+    {{ block.super }}
+    {% load static %}
+    <link rel="stylesheet" href="{% static "css/style.css"%}">
+{% endblock %}
+
+{% block title %}Create Game{% endblock %}
+
+
+{% block content %}
+<div class = "form-div">
+    <form action="/create" method="POST" enctype="multipart/form-data">
+        <div class="form-control" style="display: contents;">
+            <h1>Create Your Own Game and Enjoy</h1>
+        </div>
+        {% csrf_token %}
+        {% for forms in form %}
+            <div class="form-control" style="display: contents;">
+                {{forms.label_tag}}
+                {{forms}}
+                {{forms.errors}}
+            </div>
+        {% endfor %}
+        <div class="form-control" style="display: contents;">
+                <h1>Location</h1>
+                <input type="text" id="coordinates" required="required" name="coordinates">
+               </div>
+            <div class="button-div">
+                <button id="buttonCoord" class ="add-another" type="button">Show map</button>
+            </div>
+
+                <div class="form-map">
+            <div id="mapId">
+                {{maps|safe}}
+            </div>
+
+            </div>
+        <div class="button-div">
+            <button type = "submit">Next</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+{% block javascripts %}
+    {{ block.super }}
+    <script>
+
+        $("#buttonCoord").click(function (e) {
+                calculate_location();
+        })
+
+        function calculate_location() {
+            var ubicacion = document.getElementById("coordinates").value;
+            $.ajax({
+                type: 'POST',
+                url: '{% url "maps" %}',
+                data: {
+                    location: ubicacion
+                },
+                success: function (data) {
+                    $("#mapId").html(data);
+                },
+                error: function (data) {
+                    console.log(data);
+                },
+            });
+        }
+    </script>
+    {% endblock %}
