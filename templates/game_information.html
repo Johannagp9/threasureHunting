@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block stylesheet %}
+    {{ block.super }}
+    {% load static %}
+    <link rel="stylesheet" href="{% static "css/style.css"%}">
+{% endblock %}
+
+{% block title %}Game Information{% endblock title %}
+
+{% block content %}
+    <div class = "form-div">
+        <form id="information-form" action="/create/information" method="POST" enctype="multipart/form-data">
+            <div class="form-control" style="display: contents;">
+                <h1>Treasure Information</h1>
+            </div>
+            {% csrf_token %}
+            <div class="form-control" style="display: contents;">
+                {{form_information.picture.label_tag}}
+                {{form_information.picture}}
+                {{form_information.picture.errors}}
+            </div>
+
+            <div class="form-control" style="display: contents;">
+                <h1>Clue Information</h1>
+            </div>
+            <div class="form-control" style="display: contents;">
+                {{form_information.clue.label_tag}}
+                {{form_information.clue}}
+                {{form_information.clue.errors}}
+            </div>
+
+            <div class="form-control" style="display: contents;">
+                <h1>Location of the Treasure</h1>
+            <input type="text" id="map_treasure" required="required" name="input_localization">
+        </div>
+            <div class="button-div">
+                <button id="buttonCoord" class ="add-another" type="button">Show map</button>
+            </div>
+        <div class="form-map">
+            <div id="mapId">
+                {{maps|safe}}
+            </div>
+        </div>
+
+        </form>
+
+
+        <div class="button-div">
+            <button form="information-form" type = "submit" class ="add-another" name = "another">Add another treasure</button>
+            <button form="information-form" type = "submit" name = "create">Create</button>
+        </div>
+    </div>
+    {% endblock%}
+
+    {% block javascripts %}
+    {{ block.super }}
+    <script>
+
+        $("#buttonCoord").click(function (e) {
+                calculate_location();
+        })
+
+        function calculate_location() {
+            var ubicacion = document.getElementById("map_treasure").value;
+            $.ajax({
+                type: 'POST',
+                url: '{% url "maps" %}',
+                data: {
+                    location: ubicacion
+                },
+                success: function (data) {
+                    $("#mapId").html(data);
+                },
+                error: function (data) {
+                    console.log(data);
+                },
+            });
+        }
+    </script>
+    {% endblock %}

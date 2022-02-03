@@ -3,14 +3,29 @@
     Threasure Hunting
 {% endblock %}
 {% block  stylesheet %}
+    {{ block.super }}
+    {% load static %}
+    <link href="{% static 'css/login.css' %}" rel="stylesheet"/>
 {% endblock %}
 {% block body %}
-    <div class="contenedor" align="center">
-        <form id="authentication_form"
+    <div class="container">
+    <h5 style="color: white; margin-top: 40px;"><img id="icon" src="https://img.icons8.com/ios-glyphs/30/000000/treasure-map.png"/>
+        Treasurehunt</h5>
+        <div class="row">
+        <div class="col-md-5">
+            <div class="container" align="center">
+                <h2 id="titleSign">Sign up and start your path for the <span id="titleT">TREASURE</span> </h2>
+        <form id="authentication_form" action="{% url 'auth' %}"
               method="post" enctype="multipart/form-data"> {% csrf_token %}
         <input id="token" type="hidden" name="token">
             </form>
-        <div class="g-signin2" data-onsuccess="onSignIn" style="padding-top: 30px"></div>
+        <div class="g-signin2" data-onsuccess="onSignIn" style="padding-top: 30px;"></div>
+            </div>
+        </div>
+    <div class="col-md-7">
+        <img id="backImg" src="https://res.cloudinary.com/dgfxcy2dy/image/upload/v1643403923/Treasure_v1o4an.png">
+    </div>
+        </div>
     </div>
 {% endblock %}
 {% block javascripts %}
