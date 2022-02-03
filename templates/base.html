@@ -65,11 +65,11 @@
             <div class="bg-light" id="sidebar-wrapper">
                 <div class="list-group list-group-flush" >
                     <a href="" 
-                        style="color:#F58310; background-color:#15073C" class="list-group-item list-group-item-action"></i>
+                        style="color:#F58310; background-color:#15073C" class=" list-group-item-action"></i>
                         <i class="fas fa-home" ></i>Home</a>
 
                     <a href="" 
-                    style="color:#F58310; background-color:#15073C" class="list-group-item list-group-item-action ">
+                    style="color:#F58310; background-color:#15073C" class="list-group-item-action ">
                         <i class="far fa-map" ></i>My games</a>
 
                     <a href="" 
@@ -92,9 +92,11 @@
                 <div class="col-9">
                     <button class="openbtn" onclick="openNav()">&#9776;</button> 
                   </div>
+                  <div class="container">
                     <br>
                         {% block content %}
                         {% endblock %}
+                    </div>
             </div>
         </div>
     </div>
@@ -124,7 +126,7 @@ function openNav() {
 /* Set the width of the sidebar to 0 and the left margin of the page content to 0 */
 function closeNav() {
   document.getElementById("mySidebar").style.width = "0";
-  document.getElementById("content").style.marginLeft = "0";
+  document.getElementById("content").style.marginLeft = "250";
 }
 
 

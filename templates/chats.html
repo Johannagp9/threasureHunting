@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}
+   Chat
+{% endblock %}
+{% block stylesheet %}
+    {{ block.super }}
+    {% load static %}
+    <link href="{% static 'css/chat.css' %}" rel="stylesheet"/>
+{% endblock %}
+{% block content %}
+    <br>
+    <div class="form-row profile-row">
+    <br><br>
+    <div class="container">
+        {% if not chats %}
+            <p>There isn't any chat created yet. Start now!!</p>
+            <br>
+        {% else %}
+            <h3>Chats</h3>
+            <hr>
+            <br>
+            <div>
+            <ul class="list-group list-group-chat" id="list-sentences">
+            {% for chat in chats %}
+                <li class="list-group-item">
+                <div name="chat_div" style="display:none;" id="{{ chat.id }}">
+                </div> 
+                <a href="{% url 'show_chat' chat.id %}">
+                    {% if chat.user1.id == user %} 
+                    {{ chat.user2.name }} 
+                    {% else %}
+                    {{ chat.user1.name}} 
+                    {% endif %}
+                    {% if chat.without_read > 0 %}
+                    <span class="without-read"> ({{chat.without_read}})</span>
+                    {% endif %}
+                </a>
+                </li>
+                {% endfor %}
+            </ul> 
+            {% endif %}
+        <h3>Create a new chat!</h3>
+        <hr>
+        <form action="{% url 'new_chat' %}" method="post"> {% csrf_token %}
+            <label>Open a new chat with:</label>
+            <select name="receiver">
+                {% for user in users %} 
+                    <option value="{{ user.id }}">{{ user.name }}</option>
+                {% endfor %}
+            </select><br>
+            <labelmessage</label><textarea rows="5" cols="25" name="message" style="width: 100%;"></textarea><br>
+            <input class="btn btn-chat" type="submit" value="Create chat">
+        </form>
+        </div>
+        <br><br><br>
+    </div>  
+    </div>
+<br><br>
+{% endblock %}
+{% block javascripts %}
+    {{ block.super }}
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
+{% endblock %}

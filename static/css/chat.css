@@ -1,7 +1,9 @@
 h2 {
     color: #F58310;
 }
-
+h3 {
+    color: #F58310;
+}
 .profile-row {
     background-color: white; 
     border-color: #000000; 
@@ -10,6 +12,63 @@ h2 {
     border-width: 1px; 
     padding:12px; 
     width:100%; 
-    box-shadow: 5px 10px #F58310;
-
 }
+
+
+.list-group-chat {
+    margin-top: 10px;
+    max-height: 350px;
+    margin-bottom: 10px;
+    overflow:scroll;
+    -webkit-overflow-scrolling: touch;
+}
+
+
+
+.without-read {
+    color: #F58310;
+}
+.btn-chat {
+    color: white;
+    background-color: #F58310 ;
+}
+
+.darker {
+    border-color: #ccc;
+    background-color: #ddd;
+  }
+  
+  .container::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+  
+  .container img {
+    float: left;
+    max-width: 60px;
+    width: 100%;
+    margin-right: 20px;
+    border-radius: 50%;
+  }
+  
+  .container img.right {
+    float: right;
+    margin-left: 20px;
+    margin-right:0;
+  }
+  
+  .time-right {
+    float: right;
+    color: #aaa;
+  }
+  
+  .time-left {
+    float: left;
+    color: #999;
+  }
+
+  .text-left {
+    float: left;
+    color: #999;
+  }
