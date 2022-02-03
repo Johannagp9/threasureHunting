@@ -2,3 +2,14 @@ cloudinary==1.23.0
 Django==3.0.5
 google==3.0.0
 google-auth==1.24.0
+django-rest-framework-mongoengine==3.4.1
+djangorestframework==3.12.2
+django-mongoengine==0.4.4
+django-mongoengine-filter==0.3.5
+pymongo==3.11.0
+dnspython==1.16.0
+requests==2.25.0
+django-filter==2.4.0
+folium~=0.12.1.post1
+mongoengine~=0.21.0
+Pillow==9.0.0

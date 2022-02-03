@@ -13,7 +13,7 @@ import os
 from pathlib import Path
 import cloudinary
 
-GOOGLE_CLIENT_ID = ''
+GOOGLE_CLIENT_ID = '1029113520429-398ll2mvjqd7uvqnalhoutt9ta6m9igt.apps.googleusercontent.com'
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -109,6 +109,8 @@ MONGODB_DATABASES = {
 DATABASES = {
 
 }
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
