@@ -158,3 +158,19 @@ button:active{
     height: 90%;
     margin: 1rem auto;
 }
+
+/* show_map.html css */
+.map-container{
+overflow:hidden;
+padding-top:10%;
+padding-bottom:10%;
+position:relative;
+height:100px;
+}
+.map-container iframe{
+left:0;
+top:50;
+height:100%;
+width:100%;
+position:absolute;
+}

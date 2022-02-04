@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-from .forms import CreateGameForm, GameInformationForm
+from .forms import CreateGameForm, GameInformationForm, MapForm
 import folium
 import cloudinary.uploader
 from django.http import HttpResponse
@@ -17,14 +17,13 @@ import json
 import requests
 
 # Create your views here.
-##TEMPLATES
+# TEMPLATES
 LOGIN_TEMPLATE = "login.html"
 REGISTER_USER_TEMPLATE = "register.html"
 MAP_TEMPLATE = "client/map.html"
 
 json_data = {
-    "treasure_information":[
-
+    "treasure_information": [
     ]
 }
 
@@ -32,6 +31,7 @@ json_data = {
 # Create your views here.
 def login(request):
     return render(request, LOGIN_TEMPLATE)
+
 
 def store_image_treasure(file):
     if len(file) > 0:
@@ -43,8 +43,8 @@ def store_image_treasure(file):
 
 def normalizar(valor):
     valor = re.sub(
-        r"([^n\u0300-\u036f]|n(?!\u0303(?![\u0300-\u036f])))[\u0300-\u036f]+", r"\1", 
-        normalize( "NFD", valor), 0, re.I
+        r"([^n\u0300-\u036f]|n(?!\u0303(?![\u0300-\u036f])))[\u0300-\u036f]+", r"\1",
+        normalize("NFD", valor), 0, re.I
     )
     return normalize("NFC", valor)
 
@@ -52,72 +52,69 @@ def normalizar(valor):
 def generate_request_init(url, params={}):
 
     response = requests.get(url, params=params)
-    
+
     if response.status_code >= 200 and response.status_code < 300:
         return response.json()
 
 
 def response_2_dict(response):
     json_response = json.dumps(response)
-    result = json.loads(json_response)  
+    result = json.loads(json_response)
     return result
 
-
-def _get_coordinates(location):
-    # TODO Debugging
-    print("\n\n_get_coordinates")
-    print(location)
+# returns the location in the form of an array = [lat, lng]
+def _get_coordinates_by_location_name(location):
     coordinates = cache.get(location)
+    print("coordinates")
+    print(coordinates)
     if coordinates is None:
-        url_location = "https://nominatim.openstreetmap.org/search?q=" + location + "&format=json&addressdetails=1"
+        url_location = "https://nominatim.openstreetmap.org/search?q=" + \
+            location + "&format=json&addressdetails=1"
         response = generate_request_init(url_location, {})
         if response:
             result = response_2_dict(response)
             if result:
                 lat = float(result[0]["lat"])
                 long = float(result[0]["lon"])
-                coordinates= [lat, long]
+                coordinates = [lat, long]
                 cache.set(normalizar(location), coordinates, 3600)
                 return coordinates
         return None
-    print("coordinates")
-    print(coordinates)
-    
-    if len(coordinates) > 1:
+
+    elif len(coordinates) > 1:
         if isinstance(coordinates[0], float) and isinstance(coordinates[1], float):
             return coordinates
         else:
             return [coordinates['lat'], coordinates['long']]
     else:
-        # TODO add proper error handling
+        print("Location could not be returned!")
         return [0, 0]
-
 
 
 def edit_game(request):
 
-    maps = get_map([54.372158,18.638306])
+    maps = get_map([54.372158, 18.638306])
     if request.method == "POST":
         form = CreateGameForm(request.POST, request.FILES)
         if form.is_valid():
             data = form.cleaned_data
-            data['user_image'] = store_image_treasure(request.FILES["user_image"])
+            data['user_image'] = store_image_treasure(
+                request.FILES["user_image"])
             print(data)
             return HttpResponseRedirect("/create/information")
     else:
         form = CreateGameForm()
 
-    return render(request, "client/edit_game.html",{
-         "form": form,
-         "test": range(5),  #number of created Treasures in game
-         "title": "Some name",   #Name of the game that user typed
-         "treasure_description": "This is example of treasure description to make area look like normal area and some more informations here nothjing important", #it would be good to use here list to refer in templates in each iteration to different text
-         "treasure_image": "https://www.polska.travel/images/pl-PL/glowne-miasta/gdansk/gdansk_motlawa_1170.jpg",
-         "clue_description": "This is example of treasure description to make area look like normal area and some more informations here nothjing important",
-         "map": maps
-        })
-
-
+    return render(request, "client/edit_game.html", {
+        "form": form,
+        "test": range(5),  # number of created Treasures in game
+        "title": "Some name",  # Name of the game that user typed
+        # it would be good to use here list to refer in templates in each iteration to different text
+        "treasure_description": "This is example of treasure description to make area look like normal area and some more informations here nothjing important",
+        "treasure_image": "https://www.polska.travel/images/pl-PL/glowne-miasta/gdansk/gdansk_motlawa_1170.jpg",
+        "clue_description": "This is example of treasure description to make area look like normal area and some more informations here nothjing important",
+        "map": maps
+    })
 
 
 def create_game(request):
@@ -125,21 +122,42 @@ def create_game(request):
         form = CreateGameForm(request.POST, request.FILES)
         if form.is_valid():
             data = form.cleaned_data
-            data['user_image'] = store_image_treasure(request.FILES["user_image"])
+            data['user_image'] = store_image_treasure(
+                request.FILES["user_image"])
             print(data)
             return HttpResponseRedirect("/create/information")
     else:
         form = CreateGameForm()
 
-    return render(request, "client/create_game.html",{
-         "form": form,
-        })
+    return render(request, "client/create_game.html", {
+        "form": form,
+    })
+
+# render the map with the given coordinates
 
 
+def show_map(request):
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = MapForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            # process the data in form.cleaned_data as required
+            # ...
+            # redirect to a new URL:
+            return HttpResponseRedirect('/create/information')
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = MapForm()
+
+    return render(request, "client/show_map.html", {
+        "form": form,
+    })
 
 
 def game_information(request):
-
 
     print('request')
     print(request.method)
@@ -147,21 +165,10 @@ def game_information(request):
         print(request.GET)
         form_information = GameInformationForm()
 
-    # print(response_2_dict(request))
-
-    #if len(json_data["treasure_information"]) > 0:
-    #    maps = get_map([json_data["treasure_information"][0]["lat"],json_data["treasure_information"][0]["long"]])
-    #else:
-    #    maps = get_map([36.72016, -4.42034])
-
-    #for i in range (0,len(json_data["treasure_information"])):
-    #  pass  
-    #maps = get_map([36.72016, -4.42034])
-    #print("PRZED form_information->>>>>",request.POST.get('input_localization'))
     elif request.method == "POST":
-        #print("form_information->>>>>",request.POST.get('input_localization'))
+        # print("form_information->>>>>",request.POST.get('input_localization'))
         #coordinates = _get_coordinates(request.POST['input_localization'])
-        #print("game_information",coordinates)
+        # print("game_information",coordinates)
         print(type(request))
         print(request.POST)
         print(type(request.POST))
@@ -169,13 +176,13 @@ def game_information(request):
 
         form_information = GameInformationForm(request.POST, request.FILES)
         if form_information.is_valid():
-            #print("VALIDform_information->>>>>",request.POST.get('input_localization'))
-            # TODO change with actual_location
-            coordinates = _get_coordinates(request.POST.get('actual_location'))
-            #coordinates = _get_coordinates(request.POST['location'])
+ 
+            coordinates = _get_coordinates_by_location_name(
+                request.POST.get('actual_location'))
+
             link = store_image_treasure(request.FILES["user_image_2"])
             json_object = {
-                "description_treasure": form_information.cleaned_data["description_information"], 
+                "description_treasure": form_information.cleaned_data["description_information"],
                 "treasure_image": link,
                 "description_clue": form_information.cleaned_data["description_information_clue"],
                 "lat": coordinates[0],
@@ -183,27 +190,27 @@ def game_information(request):
             }
             json_data["treasure_information"].append(json_object)
             print(json_data)
+
+            # TODO post the coordinates object to the server
             if 'another' in request.POST:
                 return HttpResponseRedirect("/create/information")
-            if 'create' in request.POST: 
-                
+            if 'create' in request.POST:
+
                 return HttpResponseRedirect("/create")
 
     else:
         form_information = GameInformationForm()
 
-    return render(request, "client/game_information.html",{
+    return render(request, "client/game_information.html", {
         "form_information": form_information,
     })
 
-
-
-
+# Render Map using folium
 def get_map(coordinates):
+    print("get_map using coordinates: ", coordinates)
     maps = folium.Map(location=coordinates, zoom_start=10)
-    print("jestem get_map ->",coordinates)
     counter = len(json_data["treasure_information"])+1
-    for i in range (0,counter):
+    for i in range(0, counter):
         if i == 0:
             folium.Marker(
                 location=coordinates
@@ -211,12 +218,14 @@ def get_map(coordinates):
             print("go here")
         else:
             folium.Marker(
-                location=[json_data["treasure_information"][i-1]["lat"], json_data["treasure_information"][i-1]["long"]]
+                location=[json_data["treasure_information"][i-1]["lat"],
+                          json_data["treasure_information"][i-1]["long"]]
             ).add_to(maps)
             print("else")
 
     maps = maps._repr_html_()
     return maps
+
 
 @csrf_exempt
 def auth_user(request):
@@ -226,6 +235,7 @@ def auth_user(request):
         return render(request, REGISTER_USER_TEMPLATE)
     else:
         return render(request, LOGIN_TEMPLATE)
+
 
 def check_response(request, response):
     if isinstance(response, HttpResponse):
@@ -238,9 +248,9 @@ def guardar_usuario(request):
 
     idinfo = request.session.get("token")
     user = {"google_id": idinfo['sub'],
-               "name": request.POST.get("name"),
-               "email": idinfo['email'],
-               "admin": False}
+            "name": request.POST.get("name"),
+            "email": idinfo['email'],
+            "admin": False}
     response = create_user(user, idinfo['sub'])
 
     if response:
@@ -259,7 +269,6 @@ def logout(request):
     return render(request, LOGIN_TEMPLATE)
 
 
-
 @csrf_exempt
 def index(request):
     return render(request, "base.html")
@@ -268,8 +277,21 @@ def index(request):
 @cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 @csrf_exempt
 def maps(request):
-    print("CO TO JEST ->",request)
-    coordinates = _get_coordinates(request.POST.get('location'))
+    print("views/maps funcion input get location from request:")
+    try: 
+        post_dict = request.POST.dict()
+        coordinates = list(post_dict.values())
+        print("coordinates: ", coordinates, ", len:", len(coordinates))
+        if len(coordinates) == 2:
+            print("4 get_map")
+            maps=get_map(coordinates)
+            print("5 get_map")
+            return render(request, MAP_TEMPLATE, {"maps": maps})
+    except Exception as e:
+        print(f"ERROR at maps call: {e}")
+
+    request_data = request.POST.get('coordinates')
+    coordinates = _get_coordinates_by_location_name(request_data)
     if (len(coordinates) == 2):
         maps = get_map(coordinates)
-        return  render(request, MAP_TEMPLATE, {"maps":maps})
+        return render(request, MAP_TEMPLATE, {"maps": maps})

@@ -17,3 +17,6 @@ class GameInformationForm(forms.Form):
         label="Description", widget=forms.Textarea, max_length="50")
 
 
+class MapForm(forms.Form):
+    map_name = forms.CharField(label='map name', max_length=100)
+

@@ -76,6 +76,7 @@
 
         function calculate_location() {
             var ubicacion = document.getElementById("map_treasure").value;
+            console.log(ubicacion)
             $.ajax({
                 type: 'POST',
                 url: '{% url "maps" %}',
@@ -83,9 +84,11 @@
                     location: ubicacion
                 },
                 success: function (data) {
+                    console.log("Request successful")
                     $("#mapId").html(data);
                 },
                 error: function (data) {
+                    console.log("Request failed")
                     console.log(data);
                 },
             });
