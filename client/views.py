@@ -35,9 +35,11 @@ json_data = {
 
 
 # Create your views here.
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def login(request):
     return render(request, LOGIN_TEMPLATE)
 
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def display_games(request):
     try:
         user = request.session['user']
@@ -55,6 +57,7 @@ def display_games(request):
                   "games_list" : games_list
     })
 
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 @csrf_exempt
 def auth_user(request):
     id_token = request.POST.get('token')
@@ -97,14 +100,14 @@ def save_user(request):
         messages.error(request, "An error has occurred.")
         return render(request, REGISTER_USER_TEMPLATE)
 
-
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 @csrf_exempt
 def logout(request):
     request.session['user'] = None
     return render(request, LOGIN_TEMPLATE)
 
 
-
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 @csrf_exempt
 def index(request):
     return render(request, "base.html")
@@ -183,7 +186,7 @@ def show_game(request, id):
             return render(request, LOGIN_TEMPLATE)
     except:
         return render(request, LOGIN_TEMPLATE)
-    game = get_game('61f5a32d75143a90d5ebad66', user['google_id'])
+    game = get_game(id, user['google_id'])
 
     check_response(request, game)
     game['creator'] = get_user(game['creator'], user['google_id'])
@@ -276,7 +279,7 @@ def signup_game(request, id):
         messages.error(request, "An error has occurred, you have not signed up for the game.")
     return redirect("/game/" + id)
 
-
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def show_treasure(request, id, id_creator):
     try:
         user = request.session['user']
@@ -310,37 +313,6 @@ def show_treasure(request, id, id_creator):
     return render(request, SHOW_TREASURE_TEMPLATE, dict)
 
 
-def check_winner(request, treasure, id_user, token):
-    games = get_game_by_treasure(treasure, token)
-    check_response(request, games)
-    game = games[0]
-    is_winner = True
-    i=0
-    while is_winner and i < len(game['treasures']):
-        treasure = get_treasure(game['treasures'][i], token)
-        check_response(request, treasure)
-        treasure_instance = [instance for instance in treasure['instances'] if instance['user'] == id_user]
-        is_winner = len(treasure_instance) == 0
-        i += 1
-
-    if is_winner:
-        game['winner'] = id_user
-        i = 0
-        while game['instances'][i]['user'] != id_user and i < len(game['instances']):
-            i += 1
-        game['instances'][i]['complete'] = True
-
-        user = get_user(id_user, token)
-        check_response(request, user)
-
-        response = update_game(game['id'], game, token)
-        check_response(request, response)
-        if response:
-            messages.success(request, "Game is over, the winner is "+user['name']+" !")
-        else:
-            messages.error(request, "An error has occurred.")
-    pass
-
 @cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def validate_treasure(request, id, id_user, id_creator):
     try:
@@ -358,7 +330,35 @@ def validate_treasure(request, id, id_user, id_creator):
 
     response = update_treasure(id, treasure, user['google_id'])
     check_response(request, response)
-    check_winner(request, treasure['id'], id_user, user['google_id'])
+
+    games = get_game_by_treasure(treasure['id'], user['google_id'])
+    check_response(request, games)
+    game = games[0]
+    num_treasures = len(game['treasures'])
+    num_treasures_found = 0
+    for game_treasure in game['treasures']:
+        treasure = get_treasure(game_treasure, user['google_id'])
+        check_response(request, treasure)
+        treasure_instance = [instance for instance in treasure['instances'] if instance['user'] == id_user]
+        if len(treasure_instance):
+            num_treasures_found += 1
+
+    if num_treasures == num_treasures_found:
+        game['winner'] = id_user
+        i = 0
+        while game['instances'][i]['user'] != id_user and i < len(game['instances']):
+            i += 1
+        game['instances'][i]['complete'] = True
+
+        user = get_user(id_user, user['google_id'])
+        check_response(request, user)
+        game['active'] = False
+        response = update_game(game['id'], game, user['google_id'])
+        check_response(request, response)
+        if response:
+            messages.success(request, "Game is over, the winner is " + user['name'] + " !")
+        else:
+            messages.error(request, "An error has occurred.")
     if response:
         messages.success(request, "You have validated the treasure!")
     else:
@@ -395,6 +395,7 @@ def create_instance_treasure(request, id, id_creator):
         messages.error(request, "An error has occurred, your treasure has not been sent.")
     return redirect("/treasure/" + id + '/' + id_creator)
 
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def show_chat(request, id):
     try:
         user = request.session['user']
@@ -421,8 +422,9 @@ def show_chat(request, id):
         return render(request,"show-chat.html",{
         "chat": chat,
         "user": user["id"],
-    } )
+    })
 
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def store_image_treasure(file):
     if len(file) > 0:
         result = cloudinary.uploader.upload(file, transformation=[
@@ -430,6 +432,7 @@ def store_image_treasure(file):
         image_url = result["url"]
         return image_url
 
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def edit_game(request):
     try:
         user = request.session['user']
@@ -459,6 +462,7 @@ def edit_game(request):
          "map": maps
         })
 
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def create_game(request):
     try:
         user = request.session['user']
@@ -483,7 +487,7 @@ def create_game(request):
          "form": form,
         })
 
-
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def game_information(request):
     try:
         user = request.session['user']
@@ -547,7 +551,7 @@ def game_information(request):
         "form_information": form_information,
     })
 
-
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def get_map(coordinates):
     maps = folium.Map(location=coordinates, zoom_start=10)
     print("jestem get_map ->",coordinates)

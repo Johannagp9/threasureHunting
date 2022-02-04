@@ -92,9 +92,9 @@
                     <label style="font-weight: bold">Description</label>
                     <p>{{ game.description }}</p>
                     <hr>
-                    {% if game.winner and show_treasures %}
+                    {% if game.winner %}
                         <h4> The winner is {{ game.winner.name }}!</h4>
-                        {% elif not game.winner and show_treasures%}
+                        {% elif not game.winner %}
                         <h4>No winner yet</h4>
                     {% endif %}
 
@@ -171,7 +171,7 @@
                         </div>
                         {% endif %}
                     {% if canNotSignup or show_treasures %}
-                        <a href="{% url 'treasure' treasure.id game.creator.id %}">
+                        <a  {% if game.active %}href="{% url 'treasure' treasure.id game.creator.id %}" {% endif %}>
                             <img class="card-img-top" src="{{ treasure.picture }}"
                                  alt="Card image cap">
                         </a>
