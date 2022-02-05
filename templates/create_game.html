@@ -26,12 +26,17 @@
         <div class="form-control" style="display: contents;">
                 <h1>Location</h1>
                 <input type="text" id="coordinates" required="required" name="coordinates">
+                <h3>Area height</h3>
+                <input type="text" id="height" required="required" name="height">
+                <h3>Area width</h3>
+                <input type="text" id="width" required="required" name="width">
+                <input type="text" id="coordinates" required="required" name="coordinates">
                </div>
             <div class="button-div">
                 <button id="buttonCoord" class ="add-another" type="button">Show map</button>
             </div>
 
-                <div class="form-map">
+          <div class="form-map">
             <div id="mapId">
                 {{maps|safe}}
             </div>
@@ -53,11 +58,15 @@
 
         function calculate_location() {
             var ubicacion = document.getElementById("coordinates").value;
+            var height = document.getElementById("height").value;
+            var width = document.getElementById("width").value;
             $.ajax({
                 type: 'POST',
                 url: '{% url "maps" %}',
                 data: {
-                    location: ubicacion
+                    location: ubicacion,
+                    height: height,
+                    width: width
                 },
                 success: function (data) {
                     $("#mapId").html(data);

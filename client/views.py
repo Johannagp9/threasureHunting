@@ -24,9 +24,7 @@ SHOW_TREASURE_TEMPLATE = "show-treasure.html"
 MAP_TEMPLATE = "map.html"
 
 json_data = {
-    "treasure_information":[
-
-    ]
+    "treasure_information":[]
 }
 
 
@@ -423,7 +421,6 @@ def edit_game(request):
         if form.is_valid():
             data = form.cleaned_data
             data['picture'] = store_image_treasure(request.FILES["picture"])
-            print(data)
             return HttpResponseRedirect("/create/information")
     else:
         form = CreateGameForm()
@@ -452,8 +449,6 @@ def create_game(request):
             data['picture'] = store_image_treasure(request.FILES["picture"])
             data['creator'] = user['id']
             data['coordinates'] = request.POST.get('coordinates')
-
-            print(data)
             return HttpResponseRedirect("/create/information")
     else:
         form = CreateGameForm()
@@ -475,22 +470,7 @@ def game_information(request):
     if request.method == "GET":
         print(request.GET)
         form_information = GameInformationForm()
-
-    # print(response_2_dict(request))
-
-    # if len(json_data["treasure_information"]) > 0:
-    #    maps = get_map([json_data["treasure_information"][0]["lat"],json_data["treasure_information"][0]["long"]])
-    # else:
-    #    maps = get_map([36.72016, -4.42034])
-
-    # for i in range (0,len(json_data["treasure_information"])):
-    #  pass
-    # maps = get_map([36.72016, -4.42034])
-    # print("PRZED form_information->>>>>",request.POST.get('input_localization'))
     elif request.method == "POST":
-        # print("form_information->>>>>",request.POST.get('input_localization'))
-        # coordinates = _get_coordinates(request.POST['input_localization'])
-        # print("game_information",coordinates)
         print(type(request))
         print(request.POST)
         print(type(request.POST))
@@ -527,6 +507,13 @@ def game_information(request):
     })
 
 
+def get_area(coordinates, height, width):
+    maps = folium.Map(location=coordinates, zoom_start=10)
+    points = [[coordinates[0]-width/2,coordinates[1]-height/2],[coordinates[0]+width/2,coordinates[1]+height/2],[coordinates[0]-width/2,coordinates[1]-height/2 ],[coordinates[0]+width/2,coordinates[1]+height/2]]
+    folium.Rectangle(bounds=points, color='#ff7800', fill=True, fill_color='#ffff00', fill_opacity=0.2).add_to(maps)
+    maps = maps._repr_html_()
+    return maps 
+
 def get_map(coordinates):
     maps = folium.Map(location=coordinates, zoom_start=10)
     print("jestem get_map ->",coordinates)
@@ -536,12 +523,10 @@ def get_map(coordinates):
             folium.Marker(
                 location=coordinates
             ).add_to(maps)
-            print("go here")
         else:
             folium.Marker(
                 location=[json_data["treasure_information"][i-1]["lat"], json_data["treasure_information"][i-1]["long"]]
             ).add_to(maps)
-            print("else")
 
     maps = maps._repr_html_()
     return maps
@@ -549,10 +534,12 @@ def get_map(coordinates):
 @cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 @csrf_exempt
 def maps(request):
-    print("CO TO JEST ->",request)
     coordinates = get_coordinates(request.POST.get('location'))
+    width = request.POST.get('width')
+    height = request.POST.get('height')
+    print(request.POST)
     if (len(coordinates) == 2):
-        maps = get_map((coordinates['lat'], coordinates['long']))
+        maps = get_area((coordinates['lat'], coordinates['long']),int(height)/360,int(width)/360)
         return render(request, MAP_TEMPLATE, {"maps":maps})
 
 
