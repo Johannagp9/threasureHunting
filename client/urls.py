@@ -20,7 +20,7 @@ urlpatterns = [
     path('chat/show/<str:id>', views.show_chat,name='show_chat' ),
     path("create", views.create_game, name="new_game"),
     path("create/information", views.game_information),
-    path("edit", views.edit_game),
+    path('area/', views.game_area, name='game_area'),
     path('maps/', views.maps, name='maps'),
 
 ]
