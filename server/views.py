@@ -114,10 +114,14 @@ class GameList(generics.ListCreateAPIView):
 
     def filter_queryset(self, queryset):
         treasure = self.request.query_params.get('treasure', None)
-        print(treasure)
         if treasure is not None:
             queryset = queryset.filter(treasures__contains=treasure)
-            print(queryset)
+        user = self.request.query_params.get('user', None)
+        if user is not None:
+            queryset = queryset.filter(instances__user=user)
+        creator = self.request.query_params.get('creator', None)
+        if creator is not None:
+            queryset = queryset.filter(creator=creator)
         filter_game = GameFilter(self.request.query_params, queryset=queryset)
         return filter_game.qs
 

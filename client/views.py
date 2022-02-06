@@ -56,6 +56,49 @@ def display_games(request):
     })
 
 @cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
+def my_games(request):
+    try:
+        user = request.session['user']
+        if user is None:
+            return render(request, LOGIN_TEMPLATE)
+    except:
+        return render(request, LOGIN_TEMPLATE)
+    token = user['google_id']
+    params = {'user': user['id']}
+    games_list = get_all_games(token, params)
+    if games_list is None:
+        games_list = []
+    for game in games_list:
+        if game["winner"]:
+            game["winner_name"] = get_user(game['winner'], token)["name"]
+
+    return render(request, GAMES_TEMPLATE, {
+                  "games_list": games_list
+    })
+
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
+def created_games(request):
+    try:
+        user = request.session['user']
+        if user is None:
+            return render(request, LOGIN_TEMPLATE)
+    except:
+        return render(request, LOGIN_TEMPLATE)
+    token = user['google_id']
+    params = {'creator': user['id']}
+    games_list = get_all_games(token, params)
+    if games_list is None:
+        games_list = []
+    for game in games_list:
+        if game["winner"]:
+            game["winner_name"] = get_user(game['winner'], token)["name"]
+
+    return render(request, GAMES_TEMPLATE, {
+                  "games_list": games_list
+    })
+
+
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 @csrf_exempt
 def auth_user(request):
     id_token = request.POST.get('token')

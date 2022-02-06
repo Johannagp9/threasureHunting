@@ -48,7 +48,7 @@
     {% block navigation %}
 
         <nav class="navbar navbar-expand-lg" style="height: 65px; background-color: #15073C">
-            <a class="navbar-brand"><h5 style="color: white;"><img id="icon"
+            <a class="navbar-brand" href="{% url 'display_games' %}"><h5 style="color: white;"><img id="icon"
                                                                    src="https://img.icons8.com/ios-glyphs/30/000000/treasure-map.png"/>
                 Treasurehunt</h5>
             </a>
@@ -84,34 +84,41 @@
             <div class="d-flex" id="wrapper">
                 <div class="bg-light" id="sidebar-wrapper">
                     <div class="list-group list-group-flush">
-                        <a href="{% url 'home' %}"
+                        <a href="{% url 'display_games' %}"
                            style="color:white; background-color:#15073C" class=" list-group-item-action"></i>
                             <i class="fas fa-home"></i>Home</a>
-                        <a href=""
-                           style="color:#F58310; background-color:#15073C" class="list-group-item-action ">
+                        <a href="{% url 'my_games' %}"
+                           style="color:white; background-color:#15073C" class="list-group-item-action ">
                             <i class="far fa-map"></i>My games</a>
+                        <a href="{% url 'created_games' %}"
+                           style="color:white; background-color:#15073C" class="list-group-item-action ">
+                            <i class="far fa-map"></i>Created games</a>
                         <a href="{% url 'new_game' %}"
                            style="color:white; background-color:#15073C"
                            class="list-group-item list-group-item-action ">
                             <i class="far fa-edit"></i>New game</a>
                         <a href="{% url 'show_chats' %}"
-                           style="color:#F58310; background-color:#15073C"
+                           style="color:white; background-color:#15073C"
                            class="list-group-item list-group-item-action ">
                             <i class="far fa-comment"></i>Chat</a>
                     </div>
                 </div>
             </div>
         </div>
-        <div id="content" class="col-lg-10">
+        <div id="content">
             <div class="container-fluid">
-                <div class="col-9">
-                    <button class="openbtn" onclick="openNav()">&#9776;</button>
+            <div class="row">
+                <div class="col-lg-2">
+                    <button id="openbtn" class="openbtn" onclick="openNav()">&#9776;</button>
                 </div>
+                <div class="col-lg-10">
                 <div class="container">
                     <br>
                     {% block content %}
                     {% endblock %}
                 </div>
+                </div>
+            </div>
             </div>
         </div>
     </div>
@@ -134,14 +141,16 @@
     <script>
         /* Set the width of the sidebar to 250px and the left margin of the page content to 250px */
         function openNav() {
-            document.getElementById("mySidebar").style.width = "250px";
-            document.getElementById("content").style.marginLeft = "250px";
+            document.getElementById("mySidebar").style.width = "200px";
+           // document.getElementById("content").style.marginLeft = "250px";
+            document.getElementById("openbtn").hidden = true;
         }
 
         /* Set the width of the sidebar to 0 and the left margin of the page content to 0 */
         function closeNav() {
             document.getElementById("mySidebar").style.width = "0";
-            document.getElementById("content").style.marginLeft = "250";
+            //document.getElementById("content").style.marginLeft = "250";
+            document.getElementById("openbtn").hidden = false;
         }
 
 

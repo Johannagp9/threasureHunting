@@ -24,5 +24,6 @@ urlpatterns = [
     path('area/', views.game_area, name='game_area'),
     path('maps/', views.maps, name='maps'),
     path('user_map/', views.user_map, name='user_map'),
-
+    path('my_games/', views.my_games, name='my_games'),
+    path('created_games/', views.created_games, name='created_games'),
 ]
