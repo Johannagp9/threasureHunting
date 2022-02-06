@@ -23,5 +23,6 @@ urlpatterns = [
     path("create/information", views.game_information),
     path("edit", views.edit_game),
     path('maps/', views.maps, name='maps'),
+    path('user_map/', views.user_map, name='user_map'),
 
 ]

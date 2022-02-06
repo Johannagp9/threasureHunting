@@ -15,7 +15,7 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
               integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
               crossorigin="anonymous">
-        {% endblock %}
+    {% endblock %}
 </head>
 <body style="background-color: #15073C;">
 {% block body %}
@@ -35,7 +35,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
-                    <button id="btn_close" type="button" class="btn btn-outline" style="background-color: #F58310; color: white; border-color: #F58310;"
+                    <button id="btn_close" type="button" class="btn btn-outline"
+                            style="background-color: #F58310; color: white; border-color: #F58310;"
                             onclick="signOut();">Log out
                     </button>
                 </div>
@@ -45,55 +46,76 @@
     <!------------------->
     <!--BARRA SUPERIOR-->
     {% block navigation %}
-        <nav class="navbar navbar-expand-lg justify-content-between" style="height: 65px;">
-            <div class="navbar-collapse  order-1 order-md-0 dual-collapse2">
-                <h5 style="color: white; margin-top: 40px;"><img id="icon" src="https://img.icons8.com/ios-glyphs/30/000000/treasure-map.png"/>
-                    Treasurehunt</h5>
-            </div>
-            <div class="navbar-collapse collapse w-200 order-1 order-md-0 dual-collapse2">
-                <a class="btn" href="#" data-toggle="modal" data-target="#logout_modal"
-                   style="color: white; margin-top: 40px;background-color: #F58310;">Log out
-                    <i class="fas fa-power-off" ></i></a></li>
+
+        <nav class="navbar navbar-expand-lg" style="height: 65px; background-color: #15073C">
+            <a class="navbar-brand"><h5 style="color: white;"><img id="icon"
+                                                                   src="https://img.icons8.com/ios-glyphs/30/000000/treasure-map.png"/>
+                Treasurehunt</h5>
+            </a>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="javascript:void(0)" onclick="getLocation()" id="navbarDropdown" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: white;">
+                            My location
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown" style="width: 500px;">
+                            <p id="coordinates"></p>
+                            <div id="mapId">
+                                {{ maps|safe }}
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <ul class="navbar-nav my-2 my-lg-0">
+                    <li class="nav-item">
+                        <a class="btn" href="#" data-toggle="modal" data-target="#logout_modal"
+                           style="color: white; background-color: #F58310; border-radius: 20px">
+                            <i class="fas fa-power-off"></i></a></li>
+                </ul>
             </div>
         </nav>
         <!----------------------------->
     {% endblock navigation %}
     <div class="row">
-    <div id="mySidebar" class="sidebar">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-        <div class="d-flex" id="wrapper" >
-            <div class="bg-light" id="sidebar-wrapper">
-                <div class="list-group list-group-flush" >
-                    <a href="{% url 'home' %}"
-                        style="color:#F58310; background-color:#15073C" class=" list-group-item-action"></i>
-                        <i class="fas fa-home" ></i>Home</a>
-                    <a href=""
-                    style="color:#F58310; background-color:#15073C" class="list-group-item-action ">
-                        <i class="far fa-map" ></i>My games</a>
-                    <a href="{% url 'new_game' %}"
-                        style="color:#F58310; background-color:#15073C" class="list-group-item list-group-item-action ">
-                        <i class="far fa-edit" ></i>New game</a>
-                    <a href="{% url 'show_chats' %}"
-                        style="color:#F58310; background-color:#15073C" class="list-group-item list-group-item-action ">
-                        <i class="far fa-comment" ></i>Chat</a>
+        <div id="mySidebar" class="sidebar">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+            <div class="d-flex" id="wrapper">
+                <div class="bg-light" id="sidebar-wrapper">
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'home' %}"
+                           style="color:white; background-color:#15073C" class=" list-group-item-action"></i>
+                            <i class="fas fa-home"></i>Home</a>
+                        <a href=""
+                           style="color:#F58310; background-color:#15073C" class="list-group-item-action ">
+                            <i class="far fa-map"></i>My games</a>
+                        <a href="{% url 'new_game' %}"
+                           style="color:white; background-color:#15073C"
+                           class="list-group-item list-group-item-action ">
+                            <i class="far fa-edit"></i>New game</a>
+                        <a href="{% url 'show_chats' %}"
+                           style="color:#F58310; background-color:#15073C"
+                           class="list-group-item list-group-item-action ">
+                            <i class="far fa-comment"></i>Chat</a>
+                    </div>
                 </div>
             </div>
-      </div>
-    </div>
+        </div>
         <div id="content" class="col-lg-10">
             <div class="container-fluid">
                 <div class="col-9">
-                    <button class="openbtn" onclick="openNav()">&#9776;</button> 
-                  </div>
-                  <div class="container">
+                    <button class="openbtn" onclick="openNav()">&#9776;</button>
+                </div>
+                <div class="container">
                     <br>
-                        {% block content %}
-                        {% endblock %}
-                    </div>
+                    {% block content %}
+                    {% endblock %}
+                </div>
             </div>
         </div>
     </div>
-</div>
+    </div>
 {% endblock %}
 {% block javascripts %}
     <script src="https://code.jquery.com/jquery-3.3.1.js"
@@ -111,17 +133,16 @@
     <script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
     <script>
         /* Set the width of the sidebar to 250px and the left margin of the page content to 250px */
-function openNav() {
-  document.getElementById("mySidebar").style.width = "250px";
-  document.getElementById("content").style.marginLeft = "250px";
-}
+        function openNav() {
+            document.getElementById("mySidebar").style.width = "250px";
+            document.getElementById("content").style.marginLeft = "250px";
+        }
 
-/* Set the width of the sidebar to 0 and the left margin of the page content to 0 */
-function closeNav() {
-  document.getElementById("mySidebar").style.width = "0";
-  document.getElementById("content").style.marginLeft = "250";
-}
-
+        /* Set the width of the sidebar to 0 and the left margin of the page content to 0 */
+        function closeNav() {
+            document.getElementById("mySidebar").style.width = "0";
+            document.getElementById("content").style.marginLeft = "250";
+        }
 
 
         function signOut() {
@@ -137,7 +158,53 @@ function closeNav() {
                 gapi.auth2.init();
             });
         }
+
+        let position = {}
+
+        function getLocation() {
+            let coordinates = document.getElementById("coordinates");
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition);
+            } else {
+                coordinates.innerHTML = "Geolocation is not supported by this browser.";
+            }
+        }
+
+        function showPosition(position) {
+            let {latitude, longitude} = position.coords;
+            show_map({latitude, longitude})
+        }
+
+
+        function show_map(coordinates) {
+
+            if (typeof coordinates === 'object' &&
+                !Array.isArray(coordinates) &&
+                coordinates !== null) {
+
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "user_map" %}',
+                    data: {
+                        'coordinates': coordinates
+                    },
+                    success: function (data) {
+                        $("#mapId").html(data);
+                    },
+                    error: function (data) {
+                        console.log(data);
+                    },
+                });
+
+            }
+
+        }
+
+
     </script>
+
+
 {% endblock %}
 </body>
 </html>

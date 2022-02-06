@@ -580,4 +580,14 @@ def maps(request):
         maps = get_map((coordinates['lat'], coordinates['long']))
         return render(request, MAP_TEMPLATE, {"maps":maps})
 
-
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
+@csrf_exempt
+def user_map(request):
+    post_dict = request.POST.dict()
+    coordinates = list(post_dict.values())
+    maps = folium.Map(location=coordinates, zoom_start=10)
+    folium.Marker(
+        location=coordinates
+    ).add_to(maps)
+    maps = maps._repr_html_()
+    return render(request, MAP_TEMPLATE, {"maps": maps})

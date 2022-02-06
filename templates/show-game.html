@@ -28,7 +28,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-outline" style="background-color: #F58310; color: white; border-color: #F58310;"
+                    <button type="button" class="btn btn-outline"
+                            style="background-color: #F58310; color: white; border-color: #F58310;"
                             onclick="window.location.href='{% url 'restart_game' game.id %}'">Restart
                     </button>
                 </div>
@@ -44,7 +45,8 @@
         {% endfor %}
     {% endif %}
 
-    <span class="up icon-arrow-up2" style="display: none; z-index:20;padding: 20px; background-color: white; cursor: pointer; position: fixed; bottom: 10px; right: 5px; border-radius: 30px">
+    <span class="up icon-arrow-up2"
+          style="display: none; z-index:20;padding: 20px; background-color: white; cursor: pointer; position: fixed; bottom: 10px; right: 5px; border-radius: 30px">
     <i class="fa fa-chevron-up"></i>
     </span>
     <section>
@@ -55,9 +57,9 @@
                     <a class="nav-link" href="#loc"><i class="fa fa-map-marked-alt"></i> Location</a>
                 </li>
                 {% if show_treasures %}
-                <li class="nav-item">
-                    <a class="nav-link" href="#par"><i class="fa fa-users"></i> Players</a>
-                </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#par"><i class="fa fa-users"></i> Players</a>
+                    </li>
                 {% endif %}
                 <li class="nav-item">
                     <a class="nav-link" href="#tre"><i class="fa fa-gem"></i> Treasures</a>
@@ -73,7 +75,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-lg-6">
-                        <img class="img-fluid" src="{{ game.picture }}" >
+                        <img class="img-fluid" src="{{ game.picture }}">
                     </div>
                     <div class="col-lg-6">
                         <div class="text-right">
@@ -89,46 +91,47 @@
                         <p><a style="font-weight: bold">Creator:</a>
                             <a style="color: #15073C">{{ game.creator.name }}</a>
                         </p>
-                    <label style="font-weight: bold">Description</label>
-                    <p>{{ game.description }}</p>
-                    <hr>
-                    {% if game.winner %}
-                        <h4> The winner is {{ game.winner.name }}!</h4>
+                        <label style="font-weight: bold">Description</label>
+                        <p>{{ game.description }}</p>
+                        <hr>
+                        {% if game.winner %}
+                            <h4> The winner is {{ game.winner.name }}!</h4>
                         {% elif not game.winner %}
-                        <h4>No winner yet</h4>
-                    {% endif %}
+                            <h4>No winner yet</h4>
+                        {% endif %}
 
                         {% if game.active %}
                             <p>Active</p>
                             {% if game.restart_date %}
-                    <p>The game was restored on {{ game.restart_date }}</p>
-                    {% endif %}
+                                <p>The game was restored on {{ game.restart_date }}</p>
+                            {% endif %}
 
                             {% if user.id == game.creator.id %}
-                               <button class="btn" data-toggle="modal" data-target="#restartModalCenter" id="btnSignup">
-                                       Restart <i data-toggle="tooltip" data-placement="top"
-                                           class="fa fa-redo-alt"></i>
-                                    </button>
+                                <button class="btn" data-toggle="modal" data-target="#restartModalCenter"
+                                        id="btnSignup">
+                                    Restart <i data-toggle="tooltip" data-placement="top"
+                                               class="fa fa-redo-alt"></i>
+                                </button>
                             {% elif canNotSignup %}
                                 <hr>
                                 <p style="font-weight: bold">
-                                You are already subscribed to this game.
+                                    You are already subscribed to this game.
                                 </p>
                             {% else %}
                                 <hr>
                                 <button class="btn" data-toggle="modal" id="btnSignup"
-                                onclick="window.location.href='{% url 'signup_game' game.id %}'">
+                                        onclick="window.location.href='{% url 'signup_game' game.id %}'">
                                     Sign up <i data-toggle="tooltip" data-placement="top"
-                                           class="fa fa-plus-square" style="color:whitesmoke;"></i>
-                                    </button>
+                                               class="fa fa-plus-square" style="color:whitesmoke;"></i>
+                                </button>
                             {% endif %}
                         {% else %}
                             <p>Inactive</p>
                         {% endif %}
 
-                </div>
                     </div>
                 </div>
+            </div>
 
         </section>
 
@@ -138,62 +141,62 @@
         <div id="loc" class="card">
             <div class="card-body" style="height: auto;">
                 <div class="form-map">
-                <p>{{ game.location }}</p>
-                <div id="mapId">
-                {{maps|safe}}
-                </div>
+                    <p>{{ game.location }}</p>
+                    <div id="mapId">
+                        {{ maps|safe }}
+                    </div>
                 </div>
 
             </div>
         </div>
         <br/>
-{% if show_treasures %}
-        <div id="par" class="card">
-            <div class="card-header">
-                <i class="fa fa-users"></i> Players
+        {% if show_treasures %}
+            <div id="par" class="card">
+                <div class="card-header">
+                    <i class="fa fa-users"></i> Players
+                </div>
+                <div class="card-body" style="height: auto;">
+                    {% for player in game.players %}
+                        <p>{{ player.name }} - {{ player.email }}</p>
+                    {% endfor %}
+                </div>
             </div>
-            <div class="card-body" style="height: auto;">
-                {% for player in game.players %}
-                    <p>{{ player.name }} - {{ player.email }}</p>
+        {% endif %}
+        <br/>
+        <div id="tre">
+            <div class="row d-flex d-sm-flex justify-content-rigth justify-content-sm-rigth">
+                {% for treasure in treasures %}
+                    <div class="col-md-3" style="width: 300px;height: 500px">
+                        <div class="card cards-shadown cards-hover" data-aos="slide-right" data-aos-duration="950">
+                            {% if show_treasures %}
+                                <div class="card-header" style="color: dimgrey">
+                                    <i class="fas fa-globe-africa"></i> {{ treasure.coordinates }}
+                                </div>
+                            {% endif %}
+                            {% if canNotSignup or show_treasures %}
+                                <a {% if game.active %}href="{% url 'treasure' treasure.id game.creator.id %}" {% endif %}>
+                                    <img class="card-img-top" src="{{ treasure.picture }}"
+                                         alt="Card image cap">
+                                </a>
+                            {% else %}
+                                <img class="card-img-top" src="{{ treasure.picture }}"
+                                     alt="Card image cap">
+                            {% endif %}
+                            <div class="card-body">
+                                <label style="font-weight: bold">Clue </label>
+                                <p>{{ treasure.clue }}
+                                </p>
+                            </div>
+                        </div>
+                        <br><br>
+                    </div>
                 {% endfor %}
             </div>
         </div>
-    {% endif %}
-<br/>
-    <div id="tre">
-    <div class="row d-flex d-sm-flex justify-content-rigth justify-content-sm-rigth">
-            {% for treasure in treasures %}
-                <div class="col-md-3" style="width: 300px;height: 500px">
-                    <div class="card cards-shadown cards-hover" data-aos="slide-right" data-aos-duration="950">
-                        {% if show_treasures %}
-                        <div class="card-header" style="color: dimgrey">
-                            <i class="fas fa-globe-africa"></i> {{ treasure.coordinates }}
-                        </div>
-                        {% endif %}
-                    {% if canNotSignup or show_treasures %}
-                        <a  {% if game.active %}href="{% url 'treasure' treasure.id game.creator.id %}" {% endif %}>
-                            <img class="card-img-top" src="{{ treasure.picture }}"
-                                 alt="Card image cap">
-                        </a>
-                        {% else %}
-                            <img class="card-img-top" src="{{ treasure.picture }}"
-                                 alt="Card image cap">
-                    {% endif %}
-                        <div class="card-body">
-                            <label style="font-weight: bold">Clue </label>
-                            <p>{{ treasure.clue }}
-                                </p>
-                        </div>
-                    </div>
-                    <br><br>
-                </div>
-            {% endfor %}
-    </div>
-        </div>
     </div>
 
 
-<br/>
+    <br/>
     </div>
 {% endblock %}
 {% block javascripts %}
@@ -217,19 +220,19 @@
             window.open("https://twitter.com/intent/tweet?text=What's up my followers! See what treasure hunting I have found on TreasureHunt! \r\n" + text, "_blank")
         }
 
-	    $('.up').click(function(){
-		    $('body, html').animate({
-			    scrollTop: '0px'
-		    }, 300);
-	    });
+        $('.up').click(function () {
+            $('body, html').animate({
+                scrollTop: '0px'
+            }, 300);
+        });
 
-	    $(window).scroll(function(){
-		    if( $(this).scrollTop() > 0 ){
-			    $('.up').slideDown(300);
-		    } else {
-			    $('.up').slideUp(300);
-		    }
-	    });
+        $(window).scroll(function () {
+            if ($(this).scrollTop() > 0) {
+                $('.up').slideDown(300);
+            } else {
+                $('.up').slideUp(300);
+            }
+        });
 
     </script>
 {% endblock %}

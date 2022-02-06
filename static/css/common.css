@@ -5,17 +5,16 @@ body {
     font-family: 'Saira Condensed';
 }
 
-.a, .href
-{
-    color:#F58310;
+.a, .href {
+    color: #F58310;
 }
 
 
-#icon{
+#icon {
     -webkit-filter: invert(100%);
 }
 
-#btnOk{
+#btnOk {
     background-color: #F58310;
     color: white;
     border-color: #F58310;
@@ -34,58 +33,64 @@ body {
     overflow-x: hidden; /* Disable horizontal scroll */
     padding-top: 60px; /* Place content 60px from the top */
     transition: 0.5s; /* 0.5 second transition effect to slide in the sidebar */
-  }
+}
 
-  /* The sidebar links */
-  .sidebar a {
+/* The sidebar links */
+.sidebar a {
     padding: 8px 8px 8px 32px;
     text-decoration: none;
     font-size: 25px;
     color: #15073C;
     display: block;
     transition: 0.3s;
-  }
+}
 
-  /* When you mouse over the navigation links, change their color */
-  .sidebar a:hover {
+/* When you mouse over the navigation links, change their color */
+.sidebar a:hover {
     color: #F58310;
-  }
+}
 
-  /* Position and style the close button (top right corner) */
-  .sidebar .closebtn {
+/* Position and style the close button (top right corner) */
+.sidebar .closebtn {
     position: absolute;
-    color: #F58310;
+    color: white;
     top: 0;
     right: 25px;
     font-size: 36px;
     margin-left: 50px;
-  }
+}
 
-  /* The button used to open the sidebar */
-  .openbtn {
+/* The button used to open the sidebar */
+.openbtn {
     font-size: 20px;
     cursor: pointer;
-    background-color:  #15073C;
-    color: #F58310;
+    background-color: #15073C;
+    color: white;
     padding: 10px 15px;
     border: none;
-  }
+}
 
-  .openbtn:hover {
+.openbtn:hover {
     background-color: white;
-  }
+    color: #F58310;
+}
 
-  /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
-  @media screen and (max-height: 450px) {
-    .sidebar {padding-top: 15px;}
-    .sidebar a {font-size: 18px;}
-  }
+/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+@media screen and (max-height: 450px) {
+    .sidebar {
+        padding-top: 15px;
+    }
 
-  .btn-logout {
+    .sidebar a {
+        font-size: 18px;
+    }
+}
+
+.btn-logout {
     background-color: #F58310;
     color: white;
     text-align: center;
-  }
+}
   
 
 
