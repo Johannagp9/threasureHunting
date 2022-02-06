@@ -405,6 +405,14 @@ def store_image_treasure(file):
         image_url = result["url"]
         return image_url
 
+
+def show_map(request):
+    if request.method == 'POST':
+        form = MapForm(request.POST)
+        if form.is_valid():
+            return HttpResponseRedirect('/create/information')
+
+
 def new_game(request):
     try:
         user = request.session['user']

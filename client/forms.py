@@ -12,3 +12,5 @@ class GameInformationForm(forms.Form):
     picture = forms.ImageField()
     clue = forms.CharField(label="Clue", widget=forms.Textarea, max_length="300")
     
+class MapForm(forms.Form):
+    map_name = forms.CharField(label='map_name', max_length=100)

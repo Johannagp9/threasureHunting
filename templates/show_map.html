@@ -1,0 +1,84 @@
+{% extends 'client/base.html' %}
+{% load static %}
+
+{% block css_files %}
+<link rel="stylesheet" href='{%static "client/style.css"%}'>
+<link rel="stylesheet" href='{%static "client/includes/headers.css"%}'>
+{% endblock %}
+
+{% block body %}
+{% include "./includes/header.html" %}
+<div class="form-div">
+    <div class="form-map">
+        <p>Current Location Map</p>
+        <p>Count: ${foundTreasures} / ${totalTreasures}</p>
+        <div id="mapId">
+            {{maps|safe}}
+        </div>
+    </div>
+
+    <p>Click the button to get your coordinates.</p>
+
+    <button onclick="getLocation()">Show Current Location</button>
+
+    <p id="coordinates"></p>
+
+</div>
+
+{% include "./includes/footer.html" %}
+{% endblock body %}
+
+{% block javascripts %}
+{{ block.super }}
+<script>
+
+    let position = {}
+
+    function getLocation() {
+        let coordinates = document.getElementById("coordinates");
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        } else {
+            coordinates.innerHTML = "Geolocation is not supported by this browser.";
+        }
+    }
+
+    function showPosition(position) {
+        let { latitude, longitude } = position.coords
+        console.log(latitude, longitude)
+        coordinates.innerHTML = "Latitude: " + latitude +
+            "<br>Longitude: " + longitude;
+
+        show_map({ latitude, longitude })
+    }
+
+    function show_map(coordinates) {
+
+        console.log(coordinates)
+
+        if (typeof coordinates === 'object' &&
+            !Array.isArray(coordinates) &&
+            coordinates !== null) {
+
+            console.log("Initialising POST request")
+            console.log(coordinates)
+            $.ajax({
+                type: 'POST',
+                url: '{% url "maps" %}',
+                data: {
+                    coordinates
+                },
+                success: function (data) {
+                    $("#mapId").html(data);
+                },
+                error: function (data) {
+                    console.log(data);
+                },
+            });
+
+        }
+
+    }
+</script>
+{% endblock %}
