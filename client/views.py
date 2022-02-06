@@ -524,9 +524,21 @@ def game_area(request):
 @cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 @csrf_exempt
 def maps(request):
+    print("views/maps funcion input get location from request:")
+    try:
+        post_dict = request.POST.dict()
+        coordinates = list(post_dict.values())
+        print("coordinates: ", coordinates, ", len:", len(coordinates))
+        if len(coordinates) == 2:
+            maps = get_map(coordinates)
+            return render(request, MAP_TEMPLATE, {"maps": maps})
+    except Exception as e:
+        print(f"ERROR at maps call: {e}")
+
     coordinates = get_coordinates(request.POST.get('location'))
     if (len(coordinates) == 2):
         maps = get_map((coordinates['lat'], coordinates['long']),request.session.get("game"))
         return render(request, MAP_TEMPLATE, {"maps":maps})
+
 
 
