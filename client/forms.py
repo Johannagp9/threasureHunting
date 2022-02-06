@@ -11,5 +11,4 @@ class CreateGameForm(forms.Form):
 class GameInformationForm(forms.Form):
     picture = forms.ImageField()
     clue = forms.CharField(label="Clue", widget=forms.Textarea, max_length="300")
-    coordinates = forms.CharField(
-        label="Location", widget=forms.Textarea, max_length="50")
+    

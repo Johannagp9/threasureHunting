@@ -23,10 +23,8 @@ SHOW_GAME_TEMPLATE = "show-game.html"
 SHOW_TREASURE_TEMPLATE = "show-treasure.html"
 MAP_TEMPLATE = "map.html"
 CREATE_GAME_TEMPLATE = "create_game.html"
+GAME_INFORMATION_TEMPLATE = "game_information.html"
 
-json_data = {
-    "treasure_information":[]
-}
 
 
 # Create your views here.
@@ -143,7 +141,6 @@ def new_chat(request):
     except:
         return render(request, LOGIN_TEMPLATE)
     token = user['google_id']
-    print("Sending message")
     chat = {"user1": user['id'], "user2": request.POST.get("receiver"),
             "messages": [{"content": request.POST.get("message"), "date_sent": datetime.today().strftime(
                 "%Y-%m-%dT%H:%M:%S"), "sender": user['id'], "read": False}]}
@@ -282,7 +279,7 @@ def show_treasure(request, id, id_creator):
 
     show_instances = user['admin'] or user['id'] == id_creator
 
-    dict = {"treasure": treasure, "user": user, "maps": get_map(treasure['coordinates'], [], show_instances),
+    dict = {"treasure": treasure, "user": user, "maps": get_map(treasure['location'], [], show_instances),
             'instances_validated': instances_validated, "instances_pending": instances_pending,
             'instance_user': instance_user, 'show_instances': show_instances, 'id_creator': id_creator}
     return render(request, SHOW_TREASURE_TEMPLATE, dict)
@@ -408,7 +405,7 @@ def store_image_treasure(file):
         image_url = result["url"]
         return image_url
 
-def create_game(request):
+def new_game(request):
     try:
         user = request.session['user']
         if user is None:
@@ -422,11 +419,9 @@ def create_game(request):
             data['picture'] = store_image_treasure(request.FILES["picture"])
             data['creator'] = user['id']
             data['location'] = request.POST.get('coordinates')
-            data['height'] = request.POST.get('height')
-            data['width'] = request.POST.get('width')
+            data['height'] = int(request.POST.get('height'))/360
+            data['width'] = int(request.POST.get('width'))/360
             data['active'] = True
-            data['winner'] = None
-            data['restart_date'] = None
             data['treasures'] = []
             request.session['game'] = data
             return HttpResponseRedirect("/create/information")
@@ -445,40 +440,44 @@ def game_information(request):
             return render(request, LOGIN_TEMPLATE)
     except:
         return render(request, LOGIN_TEMPLATE)
-    if request.method == "GET":
-        form_information = GameInformationForm()
-    elif request.method == "POST":
+    print(request.method)
+    if request.method == "POST":
         form_information = GameInformationForm(request.POST, request.FILES)
+        print(form_information)
+        print(form_information.is_valid())
         if form_information.is_valid():
             game = request.session.get("game")
             if game :
-                coordinates = get_coordinates(request.POST.get('actual_location'))
-                picture = store_image_treasure(request.FILES["user_image_2"])
-                
-            # coordinates = _get_coordinates(request.POST['location'])
+                location = request.POST.get('location')
+                picture = store_image_treasure(request.FILES["picture"])
+                clue = form_information.cleaned_data["clue"]
+                response = create_treasure({
+                    'location':location,
+                    'picture': picture,
+                    'clue':clue
+                }, user['google_id'])
+                if response:
+                   print("TESORO CREADO JEJE")
+                   print(response)
+                   game['treasures'].append(response)
+                request.session['game'] = game
             else:
                 messages.error(request, "An error has occurred.")
-            
-            json_object = {
-                "description_treasure": form_information.cleaned_data["description_information"],
-                "treasure_image": link,
-                "description_clue": form_information.cleaned_data["description_information_clue"],
-                "lat": coordinates[0],
-                "long": coordinates[1],
-            }
-            json_data["treasure_information"].append(json_object)
-            print(json_data)
             if 'another' in request.POST:
                 return HttpResponseRedirect("/create/information")
             if 'create' in request.POST:
-                return HttpResponseRedirect("/create")
+                response = create_game(game,user['google_id'])
+                request.session['game'] = None
+                if not response:
+                    messages.error(request, "An error has occurred.")
+                else:
+                      messages.success(request, "Game has been created!")
+                return HttpResponseRedirect("/home")
 
     else:
         form_information = GameInformationForm()
 
-    print(form_information)
-
-    return render(request, "game_information.html", {
+    return render(request, GAME_INFORMATION_TEMPLATE, {
         "form_information": form_information,
     })
 
@@ -490,19 +489,25 @@ def get_area(coordinates, height, width):
     maps = maps._repr_html_()
     return maps 
 
-def get_map(coordinates):
-    maps = folium.Map(location=coordinates, zoom_start=10)
-    counter = len(json_data["treasure_information"])+1
-    for i in range (0,counter):
-        if i == 0:
-            folium.Marker(
-                location=coordinates
-            ).add_to(maps)
-        else:
-            folium.Marker(
-                location=[json_data["treasure_information"][i-1]["lat"], json_data["treasure_information"][i-1]["long"]]
-            ).add_to(maps)
 
+def get_map(treasure_coordinates, game):
+    coordinates = get_coordinates(game['location'])
+    maps = folium.Map(location=(coordinates['lat'], coordinates['long']), zoom_start=10)
+    points = [[coordinates['lat']-int(game['height'])/2,coordinates['long']-int(game['width'])/2],[coordinates['lat']+int(game['height'])/2,coordinates['long']+int(game['width'])/2],[coordinates['lat']-int(game['height'])/2,coordinates['long']-int(game['width'])/2 ],[coordinates['lat']+int(game['height'])/2,coordinates['long']+int(game['width'])/2]]
+    folium.Rectangle(bounds=points, color='#ff7800', fill=True, fill_color='#ffff00', fill_opacity=0.2).add_to(maps)
+    folium.Marker(
+                location=treasure_coordinates,
+                radius=8,
+                icon=folium.Icon(color="red"),
+        ).add_to(maps)
+    for treasure in game['treasures']:
+        coordinates_dict = get_coordinates(treasure['location'])
+        coordinates = (coordinates_dict['lat'], coordinates_dict['long'])
+        folium.Marker(
+                location=coordinates,
+                radius=8,
+                icon=folium.Icon(color="red"),
+        ).add_to(maps)
     maps = maps._repr_html_()
     return maps
 
@@ -512,7 +517,6 @@ def game_area(request):
     coordinates = get_coordinates(request.POST.get('location'))
     width = request.POST.get('width')
     height = request.POST.get('height')
-    print(request.POST)
     if (len(coordinates) == 2):
         maps = get_area((coordinates['lat'], coordinates['long']),int(height)/360,int(width)/360)
         return render(request, MAP_TEMPLATE, {"maps":maps})
@@ -522,7 +526,7 @@ def game_area(request):
 def maps(request):
     coordinates = get_coordinates(request.POST.get('location'))
     if (len(coordinates) == 2):
-        maps = get_map((coordinates['lat'], coordinates['long']))
+        maps = get_map((coordinates['lat'], coordinates['long']),request.session.get("game"))
         return render(request, MAP_TEMPLATE, {"maps":maps})
 
 
