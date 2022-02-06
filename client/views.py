@@ -64,31 +64,36 @@ def response_2_dict(response):
 
 # returns the location in the form of an array = [lat, lng]
 def _get_coordinates_by_location_name(location):
-    coordinates = cache.get(location)
-    print("coordinates")
-    print(coordinates)
-    if coordinates is None:
-        url_location = "https://nominatim.openstreetmap.org/search?q=" + \
-            location + "&format=json&addressdetails=1"
-        response = generate_request_init(url_location, {})
-        if response:
-            result = response_2_dict(response)
-            if result:
-                lat = float(result[0]["lat"])
-                long = float(result[0]["lon"])
-                coordinates = [lat, long]
-                cache.set(normalizar(location), coordinates, 3600)
-                return coordinates
-        return None
+    print("location value in _get_coordinates_by_location_name(location)")
+    print(location)
+    if location is not None:
+        coordinates = cache.get(location)
+        print("coordinates")
+        print(coordinates)
+        if coordinates is None:
+            url_location = "https://nominatim.openstreetmap.org/search?q=" + \
+                location + "&format=json&addressdetails=1"
+            response = generate_request_init(url_location, {})
+            if response:
+                result = response_2_dict(response)
+                if result:
+                    lat = float(result[0]["lat"])
+                    long = float(result[0]["lon"])
+                    coordinates = [lat, long]
+                    cache.set(normalizar(location), coordinates, 3600)
+                    return coordinates
+            return None
 
-    elif len(coordinates) > 1:
-        if isinstance(coordinates[0], float) and isinstance(coordinates[1], float):
-            return coordinates
-        else:
-            return [coordinates['lat'], coordinates['long']]
-    else:
-        print("Location could not be returned!")
-        return [0, 0]
+        elif len(coordinates) > 1:
+            if isinstance(coordinates[0], float) and isinstance(coordinates[1], float):
+                return coordinates
+            else:
+                return [coordinates['lat'], coordinates['long']]
+
+
+    print("Location could not be returned!, return 0,0 instead!")
+    return [0, 0]
+    
 
 
 def edit_game(request):
@@ -283,14 +288,12 @@ def maps(request):
         coordinates = list(post_dict.values())
         print("coordinates: ", coordinates, ", len:", len(coordinates))
         if len(coordinates) == 2:
-            print("4 get_map")
             maps=get_map(coordinates)
-            print("5 get_map")
             return render(request, MAP_TEMPLATE, {"maps": maps})
     except Exception as e:
         print(f"ERROR at maps call: {e}")
 
-    request_data = request.POST.get('coordinates')
+    request_data = request.POST.get('location')
     coordinates = _get_coordinates_by_location_name(request_data)
     if (len(coordinates) == 2):
         maps = get_map(coordinates)
