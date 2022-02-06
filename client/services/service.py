@@ -155,4 +155,20 @@ def get_map(location, treasures, show_treasures):
 
 
 
+def paginate(request, list, num_pages, page_to_get='page'):
+    paginator = Paginator(list, num_pages)
+    page = request.GET.get(page_to_get)
+    try:
+        items = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        items = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        items = paginator.page(paginator.num_pages)
+
+    return items
+
+
+
 

@@ -52,7 +52,7 @@ def display_games(request):
             game["winner_name"] = get_user(game['winner'], token)["name"]
 
     return render(request, GAMES_TEMPLATE, {
-                  "games_list" : games_list
+                  "games_list": paginate(request, games_list, 8)
     })
 
 @cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
@@ -73,7 +73,7 @@ def my_games(request):
             game["winner_name"] = get_user(game['winner'], token)["name"]
 
     return render(request, GAMES_TEMPLATE, {
-                  "games_list": games_list
+                  "games_list": paginate(request, games_list, 8)
     })
 
 @cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
@@ -94,7 +94,7 @@ def created_games(request):
             game["winner_name"] = get_user(game['winner'], token)["name"]
 
     return render(request, GAMES_TEMPLATE, {
-                  "games_list": games_list
+                  "games_list": paginate(request, games_list, 8)
     })
 
 
@@ -311,6 +311,9 @@ def signup_game(request, id):
     instance['complete'] = False
     instance['user'] = user['id']
     game['instances'].append(instance)
+    if game['restart_date'] is None:
+        del game['restart_date']
+    print(game)
     response = update_game(id, game, user['google_id'])
     check_response(request, response)
     if response:
@@ -472,6 +475,7 @@ def store_image_treasure(file):
         image_url = result["url"]
         return image_url
 
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def new_game(request):
     try:
         user = request.session['user']
@@ -556,7 +560,7 @@ def get_area(coordinates, height, width):
     maps = maps._repr_html_()
     return maps 
 
-
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def get_map(treasure_coordinates, game):
     coordinates = get_coordinates(game['location'])
     maps = folium.Map(location=(coordinates['lat'], coordinates['long']), zoom_start=10)
@@ -581,6 +585,7 @@ def get_map(treasure_coordinates, game):
 @cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 @csrf_exempt
 def game_area(request):
+    print(request.POST.get('location'))
     coordinates = get_coordinates(request.POST.get('location'))
     width = request.POST.get('width')
     height = request.POST.get('height')
