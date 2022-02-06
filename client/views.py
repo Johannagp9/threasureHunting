@@ -525,6 +525,19 @@ def get_map(treasure_coordinates, game):
     maps = maps._repr_html_()
     return maps
 
+
+
+# Render Map using folium
+def show_live_map(coordinates):
+    print("show_live_map using coordinates: ", coordinates)
+    maps = folium.Map(location=coordinates, zoom_start=10)
+    folium.Marker(
+        location=coordinates
+        ).add_to(maps)
+    maps = maps._repr_html_()
+    return maps
+
+
 @cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 @csrf_exempt
 def game_area(request):
@@ -544,7 +557,7 @@ def maps(request):
         coordinates = list(post_dict.values())
         print("coordinates: ", coordinates, ", len:", len(coordinates))
         if len(coordinates) == 2:
-            maps = get_map(coordinates)
+            maps = show_live_map(coordinates)
             return render(request, MAP_TEMPLATE, {"maps": maps})
     except Exception as e:
         print(f"ERROR at maps call: {e}")
