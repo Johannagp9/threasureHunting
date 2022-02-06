@@ -1,13 +1,12 @@
-{% extends 'client/base.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
 {% block css_files %}
 <link rel="stylesheet" href='{%static "client/style.css"%}'>
-<link rel="stylesheet" href='{%static "client/includes/headers.css"%}'>
+<link rel="stylesheet" href='{%static "client/static/common.css"%}'>
 {% endblock %}
 
 {% block body %}
-{% include "./includes/header.html" %}
 <div class="form-div">
     <div class="form-map">
         <p>Current Location Map</p>
@@ -25,7 +24,6 @@
 
 </div>
 
-{% include "./includes/footer.html" %}
 {% endblock body %}
 
 {% block javascripts %}

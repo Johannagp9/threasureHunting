@@ -13,7 +13,7 @@ from client.services.chat_service import *
 from client.services.game_service import *
 from client.services.treasure_service import *
 from django.http import HttpResponseRedirect
-from .forms import CreateGameForm, GameInformationForm
+from .forms import CreateGameForm, GameInformationForm, MapForm
 import folium
 
 
@@ -24,8 +24,7 @@ SHOW_TREASURE_TEMPLATE = "show-treasure.html"
 MAP_TEMPLATE = "map.html"
 CREATE_GAME_TEMPLATE = "create_game.html"
 GAME_INFORMATION_TEMPLATE = "game_information.html"
-
-
+SHOW_LIVE_MAP_TEMPLATE = "show_map.html"
 
 # Create your views here.
 def login(request):
@@ -411,6 +410,13 @@ def show_map(request):
         form = MapForm(request.POST)
         if form.is_valid():
             return HttpResponseRedirect('/create/information')
+
+    else:
+        form = MapForm()
+
+    return render(request, SHOW_LIVE_MAP_TEMPLATE, {
+        "form": form,
+    })
 
 
 def new_game(request):
