@@ -6,7 +6,7 @@ button{
     border: none;
     border-radius: 5px;
     padding: 8px 48px !important;
-    font-family: 'Saira Condensed';
+    font-family: 'Saira Condensed' !important;
     cursor: pointer;
     margin: 16px auto !important;
     align-items: center;
@@ -58,8 +58,6 @@ button:active{
 }
 
 
-
-
 .form-control h1{
     text-align: center;
     color: #F58310;
@@ -74,7 +72,7 @@ button:active{
     box-shadow: 0px 3px 6px #00000029;
     border-radius: 10px;
     border: none;
-    font-family: 'Marker Felt';
+    font-family: 'Marker Felt'!important;
 }
 
 .form-control label{
@@ -121,7 +119,7 @@ button:active{
     box-shadow: 0px 3px 6px #00000029;
     border-radius: 10px;
     border: none;
-    font-family: 'Saira Condensed';
+    font-family: 'Saira Condensed' !important;
 }
 
 .edit-div img{

@@ -1,4 +1,6 @@
 from sqlite3.dbapi2 import Date
+from turtle import width
+from django.forms import IntegerField
 
 from mongoengine import *
 import datetime
@@ -37,8 +39,9 @@ class Game(Document):
     description = StringField(max_length=5000)
     picture = StringField(max_length=2083)
     location = StringField(max_length=1000)
-    restart_date = DateField()
-    #coordinates = ListField(FloatField)
+    restart_date = DateField(required=False)
+    width = IntegerField()
+    height = IntegerField()
     instances = ListField(EmbeddedDocumentField(GameInstance))
     treasures = ListField(ReferenceField(Treasure))
     creator = ReferenceField(User, required=True, reverse_delete_rule=CASCADE)

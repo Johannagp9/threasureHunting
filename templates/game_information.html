@@ -3,7 +3,7 @@
 {% block stylesheet %}
     {{ block.super }}
     {% load static %}
-    <link rel="stylesheet" href="{% static "css/style.css"%}">
+    <link rel="stylesheet" href="{% static 'css/style.css'%}">
 {% endblock %}
 
 {% block title %}Game Information{% endblock title %}
@@ -29,10 +29,9 @@
                 {{form_information.clue}}
                 {{form_information.clue.errors}}
             </div>
-
             <div class="form-control" style="display: contents;">
                 <h1>Location of the Treasure</h1>
-            <input type="text" id="map_treasure" required="required" name="input_localization">
+            <input type="text" id="map_treasure" required="required" name="location">
         </div>
             <div class="button-div">
                 <button id="buttonCoord" class ="add-another" type="button">Show map</button>
@@ -42,13 +41,10 @@
                 {{maps|safe}}
             </div>
         </div>
-
-        </form>
-
-
+       </form>
         <div class="button-div">
-            <button form="information-form" type = "submit" class ="add-another" name = "another">Add another treasure</button>
-            <button form="information-form" type = "submit" name = "create">Create</button>
+            <button  form="information-form" type = "submit" class ="add-another" name = "another">Add another treasure</button>
+            <button  form="information-form" type ="submit" name = "create">Create</button>
         </div>
     </div>
     {% endblock%}

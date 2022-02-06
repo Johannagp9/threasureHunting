@@ -3,7 +3,7 @@
 {% block stylesheet %}
     {{ block.super }}
     {% load static %}
-    <link rel="stylesheet" href="{% static "css/style.css"%}">
+    <link rel="stylesheet" href="{% static 'css/style.css'%}">
 {% endblock %}
 
 {% block title %}Create Game{% endblock %}
@@ -13,7 +13,7 @@
 <div class = "form-div">
     <form action="/create" method="POST" enctype="multipart/form-data">
         <div class="form-control" style="display: contents;">
-            <h1>Create Your Own Game and Enjoy</h1>
+        <h1>Create Your Own Game and Enjoy</h1>
         </div>
         {% csrf_token %}
         {% for forms in form %}
@@ -23,15 +23,22 @@
                 {{forms.errors}}
             </div>
         {% endfor %}
-        <div class="form-control" style="display: contents;">
+                <div class="form-control" style="display: contents;">
                 <h1>Location</h1>
                 <input type="text" id="coordinates" required="required" name="coordinates">
+                </div>
+                <div class="form-control" style="display: contents;">
+                <label>Area height (km): </label>
+                <input type="text" id="height" required="required" name="height">
+                </div>
+                <div class="form-control" style="display: contents;">
+                <label>Area width (km): </label>
+                <input type="text" id="width" required="required" name="width">
                </div>
             <div class="button-div">
                 <button id="buttonCoord" class ="add-another" type="button">Show map</button>
             </div>
-
-                <div class="form-map">
+          <div class="form-map">
             <div id="mapId">
                 {{maps|safe}}
             </div>
@@ -53,11 +60,15 @@
 
         function calculate_location() {
             var ubicacion = document.getElementById("coordinates").value;
+            var height = document.getElementById("height").value;
+            var width = document.getElementById("width").value;
             $.ajax({
                 type: 'POST',
-                url: '{% url "maps" %}',
+                url: '{% url "game_area" %}',
                 data: {
-                    location: ubicacion
+                    location: ubicacion,
+                    height: height,
+                    width: width
                 },
                 success: function (data) {
                     $("#mapId").html(data);

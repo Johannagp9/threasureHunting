@@ -45,7 +45,7 @@ def generate_post(url, datos, token):
     except KeyError:
         return HttpResponse('Unauthorized', status=401)
     response = requests.post(url, json=datos, headers=headers)
-    print(response.__dict__)
+    print(response.text)
     return response
 
 
@@ -73,6 +73,9 @@ def generate_delete(url, token):
         return HttpResponse('Unauthorized', status=401)
     response = requests.delete(url, headers=headers)
     return response
+
+def get_object_id(response):
+    return json.loads(response.text)['id']
 
 
 def authenticate_user(id_token):
@@ -134,13 +137,12 @@ def get_map(location, treasures, show_treasures):
     coordinates_dict = get_coordinates(location)
     coordinates = (coordinates_dict['lat'], coordinates_dict['long'])
     maps = folium.Map(location=coordinates, zoom_start=10)
-    print("jestem get_map ->",coordinates)
     folium.Marker(
             location=coordinates
         ).add_to(maps)
     if show_treasures:
         for treasure in treasures:
-            coordinates_dict = get_coordinates(treasure['coordinates'])
+            coordinates_dict = get_coordinates(treasure['location'])
             coordinates = (coordinates_dict['lat'], coordinates_dict['long'])
             folium.Marker(
                 location=coordinates,

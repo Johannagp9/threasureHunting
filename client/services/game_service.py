@@ -13,6 +13,8 @@ def get_all_games(token, params={}):
 
 def create_game(game, token):
     url = APP_NAME + reverse(GAMES_SERVER_ROUTE_NAME)
+    print("GAME")
+    print(game)
     response = generate_post(url, game, token=token)
     return response
 
