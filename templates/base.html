@@ -77,8 +77,8 @@
                             My location
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown" style="width: 500px;">
-                            <p id="coordinates"></p>
-                            <div id="mapId">
+                            <p id="my_coordinates"></p>
+                            <div id="my_mapId">
                                 {{ maps|safe }}
                             </div>
                         </div>
@@ -139,7 +139,7 @@
         let position = {}
 
         function getLocation() {
-            let coordinates = document.getElementById("coordinates");
+            let coordinates = document.getElementById("my_coordinates");
 
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(showPosition);
@@ -167,7 +167,7 @@
                         'coordinates': coordinates
                     },
                     success: function (data) {
-                        $("#mapId").html(data);
+                        $("#my_mapId").html(data);
                     },
                     error: function (data) {
                         console.log(data);

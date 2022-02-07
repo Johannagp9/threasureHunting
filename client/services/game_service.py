@@ -34,7 +34,6 @@ def get_game_by_treasure(id, token):
 def update_game(id, game, token):
     url = APP_NAME + reverse(GAME_DETAIL_SERVER_ROUTE_NAME, args=(id,))
     response = generate_put(url, game, token=token)
-    print(response.text)
     return response
 
 

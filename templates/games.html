@@ -17,6 +17,14 @@
 
 {% block content %}
     <div class="container-fluid games">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}success
+        {% elif  message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}danger{% else %}secondary{% endif %}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
 
         <div class="row">
 
@@ -67,6 +75,8 @@
                 </div>
 
             {% endfor %}
+        </div>
+            <br/>
 
             {% if games_list.has_next or games_list.has_previous %}
                 <ul class="pagination justify-content-center">
@@ -88,8 +98,6 @@
                     {% endif %}
                 </ul>
             {% endif %}
-
-        </div>
 
     </div>
 {% endblock %}

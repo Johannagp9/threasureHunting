@@ -2,7 +2,6 @@ import datetime
 import cloudinary.uploader
 
 from django.shortcuts import render, redirect
-from datetime import datetime
 
 from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import csrf_exempt
@@ -15,7 +14,6 @@ from client.services.treasure_service import *
 from django.http import HttpResponseRedirect
 from .forms import CreateGameForm, GameInformationForm
 import folium
-
 
 from django.shortcuts import render
 
@@ -31,11 +29,11 @@ CREATE_GAME_TEMPLATE = "create_game.html"
 GAME_INFORMATION_TEMPLATE = "game_information.html"
 
 
-
 # Create your views here.
 @cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def login(request):
     return render(request, LOGIN_TEMPLATE)
+
 
 @cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def display_games(request):
@@ -52,8 +50,9 @@ def display_games(request):
             game["winner_name"] = get_user(game['winner'], token)["name"]
 
     return render(request, GAMES_TEMPLATE, {
-                  "games_list": paginate(request, games_list, 8)
+        "games_list": paginate(request, games_list, 8)
     })
+
 
 @cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def my_games(request):
@@ -73,8 +72,9 @@ def my_games(request):
             game["winner_name"] = get_user(game['winner'], token)["name"]
 
     return render(request, GAMES_TEMPLATE, {
-                  "games_list": paginate(request, games_list, 8)
+        "games_list": paginate(request, games_list, 8)
     })
+
 
 @cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def created_games(request):
@@ -94,7 +94,7 @@ def created_games(request):
             game["winner_name"] = get_user(game['winner'], token)["name"]
 
     return render(request, GAMES_TEMPLATE, {
-                  "games_list": paginate(request, games_list, 8)
+        "games_list": paginate(request, games_list, 8)
     })
 
 
@@ -115,6 +115,7 @@ def auth_user(request):
     else:
         return render(request, LOGIN_TEMPLATE)
 
+
 def check_response(request, response):
     if isinstance(response, HttpResponse):
         if response.status_code == 401:
@@ -123,13 +124,12 @@ def check_response(request, response):
 
 @cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def save_user(request):
-
     idinfo = request.session.get("token")
     user = {"google_id": idinfo['sub'],
-               "name": request.POST.get("name"),
-               "email": idinfo['email'],
-                "birth_date": request.POST.get("date"),
-               "admin": idinfo['email'] == 'pruebaparaingweb@gmail.com'}
+            "name": request.POST.get("name"),
+            "email": idinfo['email'],
+            "birth_date": request.POST.get("date"),
+            "admin": idinfo['email'] == 'pruebaparaingweb@gmail.com'}
 
     response = create_user(user, idinfo['sub'])
     if response:
@@ -140,6 +140,7 @@ def save_user(request):
     else:
         messages.error(request, "An error has occurred.")
         return render(request, REGISTER_USER_TEMPLATE)
+
 
 @cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 @csrf_exempt
@@ -156,7 +157,6 @@ def index(request):
 
 @cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def show_chats(request):
-
     try:
         user = request.session['user']
         if user is None:
@@ -173,15 +173,17 @@ def show_chats(request):
             chat['user1'] = {"id": user1['id'], "name": user1['name']}
             user2 = get_user(chat['user2'], token)
             chat['user2'] = {"id": user2['id'], "name": user2['name']}
-            chat['without_read'] = len([ message for message in chat['messages'] if message['sender']!=user["id"] and  message["read"]==False])
+            chat['without_read'] = len([message for message in chat['messages'] if
+                                        message['sender'] != user["id"] and message["read"] == False])
         chats = chats
     users = get_all_users(token)
     return render(request, "chats.html",
-    {
-        "chats": chats,
-        "users": users,
-        "user": user["id"],
-    })
+                  {
+                      "chats": chats,
+                      "users": users,
+                      "user": user["id"],
+                  })
+
 
 @cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def new_message(request):
@@ -193,12 +195,13 @@ def new_message(request):
         return render(request, LOGIN_TEMPLATE)
     chat = get_chat(request.POST.get('chat'), user['google_id'])
     chat['messages'].append(
-        {"content": request.POST.get('message'), "date_sent": datetime.today().strftime("%Y-%m-%dT%H:%M:%S"),
-         "sender":  user['id'], "read":False})
+        {"content": request.POST.get('message'), "date_sent": datetime.datetime.today().strftime("%Y-%m-%dT%H:%M:%S"),
+         "sender": user['id'], "read": False})
 
     update_chat(chat['id'], chat, user['google_id'])
 
     return redirect("/chat/show/" + chat['id'])
+
 
 @cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def new_chat(request):
@@ -210,7 +213,7 @@ def new_chat(request):
         return render(request, LOGIN_TEMPLATE)
     token = user['google_id']
     chat = {"user1": user['id'], "user2": request.POST.get("receiver"),
-            "messages": [{"content": request.POST.get("message"), "date_sent": datetime.today().strftime(
+            "messages": [{"content": request.POST.get("message"), "date_sent": datetime.datetime.today().strftime(
                 "%Y-%m-%dT%H:%M:%S"), "sender": user['id'], "read": False}]}
 
     create_chat(chat, token)
@@ -253,9 +256,14 @@ def show_game(request, id):
             check_response(request, treasure)
             treasures.append(treasure)
 
-
     show_treasures = user['admin'] or user['id'] == game['creator']['id']
-    dict = {"game": game, "user": user, "maps": service.get_map(game['location'], treasures, show_treasures),
+    width = None
+    height = None
+    if "width" in game:
+        width = game['width']
+    if "height" in game:
+        height = game['height']
+    dict = {"game": game, "user": user, "maps": service.get_map_area(game['location'], width, height, treasures, show_treasures),
             'canNotSignup': can_not_signup, "show_treasures": show_treasures, 'treasures': treasures}
     return render(request, SHOW_GAME_TEMPLATE, dict)
 
@@ -287,6 +295,8 @@ def restart_game(request, id):
 
     game['restart_date'] = datetime.datetime.utcnow().date().today().__str__()
     game['winner'] = None
+    if game['restart_date'] is None:
+        del game['restart_date']
     response = update_game(id, game, user['google_id'])
     check_response(request, response)
     if response:
@@ -294,6 +304,7 @@ def restart_game(request, id):
     else:
         messages.error(request, "An error has occurred, your game has not been restarted.")
     return redirect("/game/" + id)
+
 
 @cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def signup_game(request, id):
@@ -313,7 +324,6 @@ def signup_game(request, id):
     game['instances'].append(instance)
     if game['restart_date'] is None:
         del game['restart_date']
-    print(game)
     response = update_game(id, game, user['google_id'])
     check_response(request, response)
     if response:
@@ -321,6 +331,7 @@ def signup_game(request, id):
     else:
         messages.error(request, "An error has occurred, you have not signed up for the game.")
     return redirect("/game/" + id)
+
 
 @cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def show_treasure(request, id, id_creator):
@@ -344,9 +355,8 @@ def show_treasure(request, id, id_creator):
                 instance_user = instance
 
     instances_validated = [instance for instance in treasure['instances'] if instance['validated']]
-    instances_pending = [instance for instance in treasure['instances'] if not instance['validated'] and instance['picture_found'] is not None]
-
-
+    instances_pending = [instance for instance in treasure['instances'] if
+                         not instance['validated'] and instance['picture_found'] is not None]
 
     show_instances = user['admin'] or user['id'] == id_creator
 
@@ -382,7 +392,7 @@ def validate_treasure(request, id, id_user, id_creator):
     for game_treasure in game['treasures']:
         treasure = get_treasure(game_treasure, user['google_id'])
         check_response(request, treasure)
-        treasure_instance = [instance for instance in treasure['instances'] if instance['user'] == id_user]
+        treasure_instance = [instance for instance in treasure['instances'] if instance['user'] == id_user and instance['validated']]
         if len(treasure_instance):
             num_treasures_found += 1
 
@@ -396,6 +406,8 @@ def validate_treasure(request, id, id_user, id_creator):
         user = get_user(id_user, user['google_id'])
         check_response(request, user)
         game['active'] = False
+        if game['restart_date'] is None:
+            del game['restart_date']
         response = update_game(game['id'], game, user['google_id'])
         check_response(request, response)
         if response:
@@ -407,6 +419,7 @@ def validate_treasure(request, id, id_user, id_creator):
     else:
         messages.error(request, "An error has occurred, your validation has not been sent.")
     return redirect("/treasure/" + id + '/' + id_creator)
+
 
 @cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def create_instance_treasure(request, id, id_creator):
@@ -438,6 +451,7 @@ def create_instance_treasure(request, id, id_creator):
         messages.error(request, "An error has occurred, your treasure has not been sent.")
     return redirect("/treasure/" + id + '/' + id_creator)
 
+
 @cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def show_chat(request, id):
     try:
@@ -447,13 +461,13 @@ def show_chat(request, id):
     except:
         return render(request, LOGIN_TEMPLATE)
     token = user['google_id']
-    chat = get_chat(id,token)
+    chat = get_chat(id, token)
     chat_messages = chat['messages']
     for message in chat['messages']:
-        if message['sender']!= user['id'] and not message['read']:
-            message['read']=True
+        if message['sender'] != user['id'] and not message['read']:
+            message['read'] = True
     chat['messages'] = chat_messages
-    response = update_chat(chat['id'],chat,token)
+    response = update_chat(chat['id'], chat, token)
     if not response:
         messages.error(request, "An error has occurred, try later")
         return redirect('show_chats')
@@ -462,18 +476,19 @@ def show_chat(request, id):
         chat['user1'] = {"id": user1['id'], "name": user1['name']}
         user2 = get_user(chat['user2'], token)
         chat['user2'] = {"id": user2['id'], "name": user2['name']}
-        return render(request,"show-chat.html",{
-        "chat": chat,
-        "user": user["id"],
-    })
+        return render(request, "show-chat.html", {
+            "chat": chat,
+            "user": user["id"],
+        })
 
-@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
+
 def store_image_treasure(file):
     if len(file) > 0:
         result = cloudinary.uploader.upload(file, transformation=[
             {'width': 500, 'crop': 'scale', }])
         image_url = result["url"]
         return image_url
+
 
 @cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def new_game(request):
@@ -490,8 +505,8 @@ def new_game(request):
             data['picture'] = store_image_treasure(request.FILES["picture"])
             data['creator'] = user['id']
             data['location'] = request.POST.get('coordinates')
-            data['height'] = int(request.POST.get('height'))/360
-            data['width'] = int(request.POST.get('width'))/360
+            data['height'] = round(int(request.POST.get('height')) / 360, 4)
+            data['width'] = round(int(request.POST.get('width')) / 360, 4)
             data['active'] = True
             data['treasures'] = []
             request.session['game'] = data
@@ -499,9 +514,10 @@ def new_game(request):
     else:
         form = CreateGameForm()
 
-    return render(request, CREATE_GAME_TEMPLATE,{
-         "form": form,
-        })
+    return render(request, CREATE_GAME_TEMPLATE, {
+        "form": form,
+    })
+
 
 @cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def game_information(request):
@@ -511,39 +527,34 @@ def game_information(request):
             return render(request, LOGIN_TEMPLATE)
     except:
         return render(request, LOGIN_TEMPLATE)
-    print(request.method)
     if request.method == "POST":
         form_information = GameInformationForm(request.POST, request.FILES)
-        print(form_information)
-        print(form_information.is_valid())
         if form_information.is_valid():
             game = request.session.get("game")
-            if game :
+            if game:
                 location = request.POST.get('location')
                 picture = store_image_treasure(request.FILES["picture"])
                 clue = form_information.cleaned_data["clue"]
                 response = create_treasure({
-                    'location':location,
+                    'coordinates': location,
                     'picture': picture,
-                    'clue':clue
+                    'clue': clue
                 }, user['google_id'])
                 if response:
-                   print("TESORO CREADO JEJE")
-                   print(response)
-                   game['treasures'].append(response)
+                    game['treasures'].append(response)
                 request.session['game'] = game
             else:
                 messages.error(request, "An error has occurred.")
             if 'another' in request.POST:
                 return HttpResponseRedirect("/create/information")
             if 'create' in request.POST:
-                response = create_game(game,user['google_id'])
+                response = create_game(game, user['google_id'])
                 request.session['game'] = None
                 if not response:
                     messages.error(request, "An error has occurred.")
                 else:
-                      messages.success(request, "Game has been created!")
-                return HttpResponseRedirect("/home")
+                    messages.success(request, "Game has been created!")
+                return HttpResponseRedirect("/games")
 
     else:
         form_information = GameInformationForm()
@@ -552,54 +563,68 @@ def game_information(request):
         "form_information": form_information,
     })
 
-@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
+
 def get_area(coordinates, height, width):
     maps = folium.Map(location=coordinates, zoom_start=10)
-    points = [[coordinates[0]-width/2,coordinates[1]-height/2],[coordinates[0]+width/2,coordinates[1]+height/2],[coordinates[0]-width/2,coordinates[1]-height/2 ],[coordinates[0]+width/2,coordinates[1]+height/2]]
+    points = [[coordinates[0] - width / 2, coordinates[1] - height / 2],
+              [coordinates[0] + width / 2, coordinates[1] + height / 2],
+              [coordinates[0] - width / 2, coordinates[1] - height / 2],
+              [coordinates[0] + width / 2, coordinates[1] + height / 2]]
     folium.Rectangle(bounds=points, color='#ff7800', fill=True, fill_color='#ffff00', fill_opacity=0.2).add_to(maps)
     maps = maps._repr_html_()
-    return maps 
+    return maps
 
-@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
-def get_map(treasure_coordinates, game):
+def get_map(treasure_coordinates, game, token):
     coordinates = get_coordinates(game['location'])
     maps = folium.Map(location=(coordinates['lat'], coordinates['long']), zoom_start=10)
-    points = [[coordinates['lat']-int(game['height'])/2,coordinates['long']-int(game['width'])/2],[coordinates['lat']+int(game['height'])/2,coordinates['long']+int(game['width'])/2],[coordinates['lat']-int(game['height'])/2,coordinates['long']-int(game['width'])/2 ],[coordinates['lat']+int(game['height'])/2,coordinates['long']+int(game['width'])/2]]
+    points = [[coordinates['lat'] - int(game['height']) / 2, coordinates['long'] - int(game['width']) / 2],
+              [coordinates['lat'] + int(game['height']) / 2, coordinates['long'] + int(game['width']) / 2],
+              [coordinates['lat'] - int(game['height']) / 2, coordinates['long'] - int(game['width']) / 2],
+              [coordinates['lat'] + int(game['height']) / 2, coordinates['long'] + int(game['width']) / 2]]
     folium.Rectangle(bounds=points, color='#ff7800', fill=True, fill_color='#ffff00', fill_opacity=0.2).add_to(maps)
     folium.Marker(
-                location=treasure_coordinates,
-                radius=8,
-                icon=folium.Icon(color="red"),
-        ).add_to(maps)
+        location=treasure_coordinates,
+        radius=8,
+        icon=folium.Icon(color="red"),
+    ).add_to(maps)
     for treasure in game['treasures']:
-        coordinates_dict = get_coordinates(treasure['location'])
+        treasure = get_treasure(treasure, token)
+        coordinates_dict = get_coordinates(treasure['coordinates'])
         coordinates = (coordinates_dict['lat'], coordinates_dict['long'])
         folium.Marker(
-                location=coordinates,
-                radius=8,
-                icon=folium.Icon(color="red"),
+            location=coordinates,
+            radius=8,
+            icon=folium.Icon(color="red"),
         ).add_to(maps)
     maps = maps._repr_html_()
     return maps
 
+
 @cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 @csrf_exempt
 def game_area(request):
-    print(request.POST.get('location'))
     coordinates = get_coordinates(request.POST.get('location'))
-    width = request.POST.get('width')
-    height = request.POST.get('height')
+    width = request.POST.get('height')
+    height = request.POST.get('width')
     if (len(coordinates) == 2):
-        maps = get_area((coordinates['lat'], coordinates['long']),int(height)/360,int(width)/360)
-        return render(request, MAP_TEMPLATE, {"maps":maps})
+        maps = get_area((coordinates['lat'], coordinates['long']), int(height) / 360, int(width) / 360)
+        return render(request, MAP_TEMPLATE, {"maps": maps})
+
 
 @cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 @csrf_exempt
 def maps(request):
+    try:
+        user = request.session['user']
+        if user is None:
+            return render(request, LOGIN_TEMPLATE)
+    except:
+        return render(request, LOGIN_TEMPLATE)
     coordinates = get_coordinates(request.POST.get('location'))
     if (len(coordinates) == 2):
-        maps = get_map((coordinates['lat'], coordinates['long']),request.session.get("game"))
-        return render(request, MAP_TEMPLATE, {"maps":maps})
+        maps = get_map((coordinates['lat'], coordinates['long']), request.session.get("game"), user['google_id'])
+        return render(request, MAP_TEMPLATE, {"maps": maps})
+
 
 @cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 @csrf_exempt

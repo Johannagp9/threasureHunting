@@ -62,6 +62,7 @@
             var ubicacion = document.getElementById("coordinates").value;
             var height = document.getElementById("height").value;
             var width = document.getElementById("width").value;
+            console.log()
             $.ajax({
                 type: 'POST',
                 url: '{% url "game_area" %}',
